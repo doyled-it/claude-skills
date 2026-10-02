@@ -1,6 +1,6 @@
 ---
 name: structuring-web-nonfiction
-description: Use when structuring a web piece: an explainer, article, data story, science or politics write-up, topic page, or archive. Covers the lede, nut graf, inverted-pyramid order, scannability, presenting data and charts honestly, and the specific moves for each form. Checkable, sourced rules. Pairs with writing-human-prose (sentence craft, AI tells) and writing-a-researched-piece (the workflow).
+description: Use when deciding the shape of a web piece: its section order, lede, scannability, how to present data and charts, or which moves a given form needs (explainer, science, data, argument, archive, guide). Reference during design and drafting. Pairs with writing-human-prose.
 ---
 
 # Structuring Web Nonfiction

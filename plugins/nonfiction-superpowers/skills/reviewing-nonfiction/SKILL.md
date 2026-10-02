@@ -1,6 +1,6 @@
 ---
 name: reviewing-nonfiction
-description: Use to review a finished nonfiction draft before it ships, or to review someone else's draft. An independent, adversarial pass by fresh eyes that did not write it: fact-check against sources, structure, data honesty, craft, and AI tells. This is phase 5 of writing-nonfiction. Not for drafting or for sentence-level cleanup alone.
+description: Use to review a finished nonfiction draft before it ships, or to review someone else's draft; the review phase of writing-nonfiction. Not for drafting or for sentence-level cleanup alone.
 ---
 
 # Reviewing Nonfiction

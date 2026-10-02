@@ -1,15 +1,16 @@
 ---
 name: writing-a-researched-piece
-description: Use when building a researched piece of writing or a topic page/site: an explainer, a deep dive, an essay, a report that reaches a conclusion, or context for a subject. Use whenever voice and style matter and claims must be grounded in cited research. Covers the full workflow: pin the style, outline, research, draft, review. Not for quick factual answers or code.
+description: Use during the design and drafting of a nonfiction piece, normally invoked by writing-nonfiction at its design phase, to pin the form and style, outline, research, and draft. Not the entry point (use writing-nonfiction to start a piece), not for quick factual answers or code.
 ---
 
 # Writing a Researched Piece
 
 ## Overview
 
-A workflow for writing a researched piece well. The order is the point: pin the style
-first, outline, research, draft, then review for craft and for AI tells. Jumping straight
-to prose produces generic, unsourced, AI-sounding writing that then needs rebuilding.
+The design-through-draft engine that `writing-nonfiction` calls at its design phase. It
+assumes the brainstorm is done, and it hands the finished draft to `reviewing-nonfiction` and
+the edit pass. The order is the point: pin the style first, outline, research, draft. Jumping
+straight to prose produces generic, unsourced, AI-sounding writing that then needs rebuilding.
 
 **REQUIRED SUB-SKILLS:**
 - `structuring-web-nonfiction` for the shape: lede, nut graf, section order, scannability,
@@ -42,15 +43,15 @@ question tool, do not guess the style. Settle:
   a thesis, or just explain?
 - **Extras**: data, charts, or visuals? Inline citations visible to the reader?
 
-The recognized forms of nonfiction, each with its own default moves (from the creative-
-nonfiction literature; see writing-human-prose sources):
+Pick from the forms that `structuring-web-nonfiction` has a rule-set for, and load that
+rule-set:
 
-- **Explainer / deep dive**: makes a subject clear; leans concise and data-grounded; scenes optional.
-- **Literary journalism**: reports real events with scene, character, and a point of view; facts still exact.
-- **Personal essay**: one idea explored from the writer's view; reflective, not far into the past.
-- **Profile**: a real person built with scene and detail.
-- **Memoir**: a story from a life, heavy on reflection and scene.
-- **Lyric essay**: fragmentary, image-led, resonance over linear argument.
+- **Essay or narrative explainer**
+- **Science or research explainer**
+- **Data explainer**
+- **Argument, analysis, or political**
+- **Cultural or exploratory archive**
+- **Practical or reference guide**
 
 Each form's specific structure and moves live in `structuring-web-nonfiction`; load it and
 follow the matching rule-set.
@@ -80,7 +81,8 @@ Run both passes, not one:
 - **AI-tells pass**: the mandatory second pass from `writing-human-prose`.
 - **Structure and craft pass**: check against `structuring-web-nonfiction` (is the point in
   the lede, is there a nut graf, does it scan, are charts honest and sourced), that each
-  section opens and closes well in the agreed mode, and that every claim is sourced or flagged.
+  section's first sentence is concrete and its last lands a point (see `writing-human-prose`),
+  and that every claim is sourced or flagged.
 
 For anything that matters, get an independent pass too: `reviewing-nonfiction` dispatches a
 fresh agent to adversarially check the draft, which catches what your own reread slides over.

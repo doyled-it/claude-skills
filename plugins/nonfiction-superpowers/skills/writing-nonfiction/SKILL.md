@@ -1,6 +1,6 @@
 ---
 name: writing-nonfiction
-description: Use when writing any nonfiction piece from scratch (an explainer, essay, data story, article, topic page, report, or archive), or a web page whose job is to explain, argue, or tell a true story. The entry point that runs the full workflow by sequencing the other writing skills. Not for a one-line answer, code (use superpowers), or a trivial edit.
+description: Use when writing any nonfiction piece from scratch, or a web page whose job is to explain, argue, or tell a true story (explainer, essay, data story, article, topic page, report, archive). The entry point for nonfiction writing; start here. Not for a one-line answer, code (use superpowers), or a trivial edit.
 ---
 
 # Writing Nonfiction

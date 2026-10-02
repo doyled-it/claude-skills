@@ -1,6 +1,6 @@
 ---
 name: writing-human-prose
-description: Use when writing prose a person will read (essays, history and other nonfiction, articles, blog posts, READMEs, reports, web copy) or editing text to not read as AI-generated. Covers narrative-nonfiction craft and the specific AI tells to design out (em dashes, "not just X but Y", banned words, summary kickers, rule-of-three).
+description: Use when writing or editing prose a person will read (essays, nonfiction, articles, posts, READMEs, reports, web copy), or when text must not read as AI-generated. Use at the sentence level while drafting and during the edit pass.
 ---
 
 # Writing Human Prose
@@ -8,9 +8,9 @@ description: Use when writing prose a person will read (essays, history and othe
 ## Overview
 
 Two jobs at once: write nonfiction that is engaging and well-sourced, and strip the
-tells that make prose read as machine-generated. The second is mostly subtraction. AI
-prose is not usually wrong, it is over-balanced, over-tidy, and over-polished in
-recognizable ways. Cut those patterns and ground every claim and the writing reads human.
+tells that make prose read as machine-generated. The second job is mostly subtraction. AI
+prose is rarely wrong. It is over-polished in recognizable ways. Cut those patterns and ground
+every claim, and it reads human.
 
 Core test: read each sentence aloud. If you would not say it to a knowledgeable friend,
 cut or rewrite it.
@@ -47,7 +47,8 @@ These rules are lifted from writers and editors who taught the craft. Sources at
   be "about as visible as someone's bones" (McPhee). One thread per section.
 - **Open on something concrete** (an image, an episode, a sharp fact), and close on a point,
   never a restatement.
-- **Write with humanity and warmth.** The reader is a person, not a target (Zinsser).
+- **Write to one real reader** (Zinsser's humanity and warmth). If a sentence sounds like
+  marketing copy aimed at a segment, cut or rewrite it.
 - **Avoid stale figures of speech** and any metaphor you are used to seeing in print
   (Orwell). Prefer the short, plain word to the long or jargon one (Orwell).
 - **Scenes are built from action, specific detail, and real dialogue** (Gutkind). Use them
