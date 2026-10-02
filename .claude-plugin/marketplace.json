@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "doyled-it-skills",
+  "description": "Michael Doyle's personal Claude Code skills.",
+  "owner": {
+    "name": "doyled-it"
+  },
+  "plugins": [
+    {
+      "name": "writing-human-prose",
+      "description": "Narrative-nonfiction craft plus an AI-tells blacklist, for writing prose that reads human and stays sourced.",
+      "author": {
+        "name": "doyled-it"
+      },
+      "category": "writing",
+      "source": "./plugins/writing-human-prose"
+    }
+  ]
+}

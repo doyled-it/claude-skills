@@ -1,0 +1,18 @@
+{
+  "name": "writing-human-prose",
+  "description": "Narrative-nonfiction craft plus an AI-tells blacklist, for writing prose that reads human and stays sourced.",
+  "version": "1.0.0",
+  "author": {
+    "name": "doyled-it"
+  },
+  "license": "MIT",
+  "keywords": [
+    "writing",
+    "nonfiction",
+    "editing",
+    "ai-slop",
+    "prose",
+    "style",
+    "essays"
+  ]
+}
