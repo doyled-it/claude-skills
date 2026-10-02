@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# SessionStart hook for the nonfiction-superpowers plugin.
+# Injects a short pointer to the writing-nonfiction orchestrator so it is
+# always armed, the way superpowers surfaces using-superpowers.
+
+set -euo pipefail
+
+read -r -d '' CTX <<'EOF' || true
+<nonfiction-superpowers>
+For any nonfiction writing task (an explainer, essay, data story, article, archive, or a web page that explains, argues, or tells a true story), START with the writing-nonfiction skill via the Skill tool. It orchestrates the workflow: brainstorm, design, research, draft, review, edit. This does not apply to code (use superpowers) or to one-line answers.
+</nonfiction-superpowers>
+EOF
+
+# Escape for JSON embedding.
+escape_for_json() {
+    local s="$1"
+    s="${s//\\/\\\\}"
+    s="${s//\"/\\\"}"
+    s="${s//$'\n'/\\n}"
+    s="${s//$'\r'/\\r}"
+    s="${s//$'\t'/\\t}"
+    printf '%s' "$s"
+}
+
+ctx_escaped=$(escape_for_json "$CTX")
+
+# Claude Code reads hookSpecificOutput.additionalContext.
+printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "SessionStart",\n    "additionalContext": "%s"\n  }\n}\n' "$ctx_escaped"
+exit 0
