@@ -28,6 +28,7 @@ blacklist, and the mandatory review pass. This skill is the process around it.
 Before outlining or writing, ask the person a few questions to fix the target. Use the
 question tool, do not guess the style. Settle:
 
+- **Form**: which kind of piece (see the list below). The form sets the default moves.
 - **Mode**: scene-rich and personal, or concise and data-grounded, or somewhere between.
 - **Voice**: who is speaking, how much personality, how much restraint.
 - **Audience**: who reads it, what they already know.
@@ -35,6 +36,16 @@ question tool, do not guess the style. Settle:
 - **Structure**: narrative, thematic, or chronological; does it reach a conclusion or argue
   a thesis, or just explain?
 - **Extras**: data, charts, or visuals? Inline citations visible to the reader?
+
+The recognized forms of nonfiction, each with its own default moves (from the creative-
+nonfiction literature; see writing-human-prose sources):
+
+- **Explainer / deep dive**: makes a subject clear; leans concise and data-grounded; scenes optional.
+- **Literary journalism**: reports real events with scene, character, and a point of view; facts still exact.
+- **Personal essay**: one idea explored from the writer's view; reflective, not far into the past.
+- **Profile**: a real person built with scene and detail.
+- **Memoir**: a story from a life, heavy on reflection and scene.
+- **Lyric essay**: fragmentary, image-led, resonance over linear argument.
 
 Write the answers into a short **style sheet** (below) and keep it in front of you while
 drafting. "I'll infer the style" is the failure this step exists to prevent.

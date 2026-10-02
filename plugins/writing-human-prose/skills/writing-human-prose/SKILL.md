@@ -27,17 +27,34 @@ two. A draft is not done until it has been proofread against the blacklist.
 - Editing or "de-slopping" a draft (yours or a model's) so it does not read as AI.
 - Not for: code, data, terse status notes, or structured reference tables.
 
-## Nonfiction craft
+## Nonfiction craft (from the standard works, not invented)
 
-- **Open on something concrete**: an image, an episode, a sharp fact. Never a
-  definition, a mission statement, or "In this piece".
-- **One thread per section.** Cut anything that does not serve it.
-- **Lead with the idea, bring history in as evidence.** Go chronological only when the
-  argument needs the sequence.
-- **Show with specifics.** Concrete nouns and real detail beat abstraction.
+These rules are lifted from writers and editors who taught the craft. Sources at the end.
+
+- **Omit needless words.** Cut every word that does no work (Strunk & White). Clutter is
+  "the disease of American writing" (Zinsser). If you can cut a word, cut it (Orwell).
+- **Prefer the specific, definite, and concrete** to the general, vague, and abstract
+  (Strunk & White). Show with real detail.
+- **Use the active voice and strong verbs.** Weak verbs hide the actors; "activate your
+  verbs" (Clark). Never use the passive where the active will do (Orwell).
+- **Make meaning early.** Begin sentences with subject and verb, then branch right (Clark).
+- **Build the piece around a key question** it answers, its engine (Clark).
+- **Give it a real but invisible structure.** A piece "has to start somewhere, go
+  somewhere, and sit down when it gets there": beginning, middle, end; the structure should
+  be "about as visible as someone's bones" (McPhee). One thread per section.
+- **Open on something concrete** (an image, an episode, a sharp fact), and close on a point,
+  never a restatement.
+- **Write with humanity and warmth.** The reader is a person, not a target (Zinsser).
+- **Avoid stale figures of speech** and any metaphor you are used to seeing in print
+  (Orwell). Prefer the short, plain word to the long or jargon one (Orwell).
+- **Scenes are built from action, specific detail, and real dialogue** (Gutkind). Use them
+  only when the material and the chosen form call for it; a data-grounded explainer does not
+  need invented scene.
 - **Vary sentence length on purpose.** Let a short sentence land after a long one.
-- **Quote sparingly.** Each quotation (a line, a slogan, a historian) must earn its place.
-- **Close on a concrete point or a forward turn**, never a restatement of what you said.
+- **Quote sparingly.** Each quotation must earn its place.
+- **Rewriting is the work.** The first draft is raw material (Zinsser); the title is
+  "Draft No. 4" for a reason (McPhee).
+- **Break any of these rules sooner than write something clumsy** (Orwell's sixth).
 
 ## Sourcing discipline (for anything factual)
 
@@ -118,3 +135,24 @@ Run every item:
 6. Grep what is greppable: em dashes (expect zero), the banned words, "not just", "not only".
 
 Only after this pass is the writing done.
+
+## Sources (where the craft rules come from)
+
+The craft rules above are taken from these, not from invention:
+
+- George Orwell, "Politics and the English Language" (1946): the short word, the cut word,
+  the active voice, the stale-metaphor ban, and "break any of these rules sooner than say
+  anything outright barbarous."
+- William Zinsser, *On Writing Well*: clutter as the disease of writing, simplicity,
+  humanity and warmth, rewriting.
+- Strunk & White, *The Elements of Style*: omit needless words; use the active voice; prefer
+  the specific, definite, and concrete.
+- John McPhee, *Draft No. 4*: structure that is real but invisible; start somewhere, go
+  somewhere, sit down when it gets there.
+- Roy Peter Clark, *Writing Tools* (Poynter): begin with subject and verb, activate your
+  verbs, build around a key question.
+- Lee Gutkind (creative nonfiction): scenes as the building blocks, made of action, detail,
+  and real dialogue.
+
+The AI-tells blacklist is separate: it comes from documented patterns of machine-generated
+prose, not from these authors.
