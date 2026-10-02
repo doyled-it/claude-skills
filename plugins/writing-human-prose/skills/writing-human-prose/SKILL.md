@@ -27,6 +27,9 @@ two. A draft is not done until it has been proofread against the blacklist.
 - Editing or "de-slopping" a draft (yours or a model's) so it does not read as AI.
 - Not for: code, data, terse status notes, or structured reference tables.
 
+For the shape of a web piece (lede, nut graf, section order, scannability, presenting data
+and charts, per-form moves), use `structuring-web-nonfiction`. This skill is the sentences.
+
 ## Nonfiction craft (from the standard works, not invented)
 
 These rules are lifted from writers and editors who taught the craft. Sources at the end.

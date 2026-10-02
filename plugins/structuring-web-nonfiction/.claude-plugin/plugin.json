@@ -1,0 +1,8 @@
+{
+  "name": "structuring-web-nonfiction",
+  "description": "Checkable, sourced rules for the shape of a web piece: lede, nut graf, scannability, honest data and charts, and per-form moves. Pairs with writing-human-prose.",
+  "version": "1.0.0",
+  "author": { "name": "doyled-it" },
+  "license": "MIT",
+  "keywords": ["writing", "web", "structure", "data", "charts", "explainer", "journalism", "nonfiction"]
+}

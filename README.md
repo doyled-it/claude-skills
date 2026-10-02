@@ -9,15 +9,19 @@ A small Claude Code marketplace of personal skills.
   post-draft proofread pass, for prose that reads human and stays sourced. Triggers on
   essays, history, articles, posts, READMEs, reports, or editing text so it does not read
   as AI-generated.
-- **writing-a-researched-piece** — the workflow around it: pin the style by interview,
-  outline, research, draft, then review for craft and slop. For explainers, deep dives,
-  topic pages, and reports that reach a conclusion. Pairs with writing-human-prose.
+- **structuring-web-nonfiction** — checkable, sourced rules for the shape of a web piece:
+  lede, nut graf, inverted-pyramid order, scannability (NN/g), honest data and charts
+  (Knaflic, Cairo, Tufte), and a rule-set per form (science, data, argument, archive, guide).
+- **writing-a-researched-piece** — the workflow around the other two: pin the form and style
+  by interview, outline, research, draft, then review for structure, craft, and slop. For
+  explainers, deep dives, data stories, topic pages, and reports that reach a conclusion.
 
 ## Install
 
 ```
 /plugin marketplace add doyled-it/claude-skills
 /plugin install writing-human-prose@doyled-it-skills
+/plugin install structuring-web-nonfiction@doyled-it-skills
 /plugin install writing-a-researched-piece@doyled-it-skills
 ```
 

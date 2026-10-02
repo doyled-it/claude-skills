@@ -23,6 +23,15 @@
       },
       "category": "writing",
       "source": "./plugins/writing-a-researched-piece"
+    },
+    {
+      "name": "structuring-web-nonfiction",
+      "description": "Checkable, sourced rules for the shape of a web piece: lede, nut graf, inverted-pyramid order, scannability, honest data and charts, and per-form moves (science, data, argument, archive, guide).",
+      "author": {
+        "name": "doyled-it"
+      },
+      "category": "writing",
+      "source": "./plugins/structuring-web-nonfiction"
     }
   ]
 }
