@@ -14,6 +14,15 @@
       },
       "category": "writing",
       "source": "./plugins/writing-human-prose"
+    },
+    {
+      "name": "writing-a-researched-piece",
+      "description": "Workflow for a researched written piece: pin the style, outline, research, draft, then review for craft and AI tells. Pairs with writing-human-prose.",
+      "author": {
+        "name": "doyled-it"
+      },
+      "category": "writing",
+      "source": "./plugins/writing-a-researched-piece"
     }
   ]
 }
