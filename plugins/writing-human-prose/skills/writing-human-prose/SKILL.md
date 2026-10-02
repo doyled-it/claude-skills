@@ -15,6 +15,11 @@ recognizable ways. Cut those patterns and ground every claim and the writing rea
 Core test: read each sentence aloud. If you would not say it to a knowledgeable friend,
 cut or rewrite it.
 
+Writing clean and editing clean are two separate jobs. The first draft always carries
+tells, even when you know this whole list, because drafting attention goes to the argument
+and not the patterns. So drafting is step one, and the mandatory second pass below is step
+two. A draft is not done until it has been proofread against the blacklist.
+
 ## When to use
 
 - Any longform nonfiction: essays, history, explainers, articles, posts.
@@ -90,10 +95,26 @@ After:
 - You reached for a word on the banned list.
 - There is an em dash.
 - A factual claim has no source behind it.
+- You are about to call a first draft done without a separate edit pass.
 
-## Final checks
+## The second pass is mandatory
 
-1. Read it aloud. Cut anything you would not say.
-2. `grep` for em dashes. Expect zero.
-3. Scan for the banned words and the templates above.
-4. Every fact is sourced or explicitly flagged as interpretation or uncertain.
+Do not skip this because you "followed the rules while writing". You did not catch them all;
+nobody does on the first pass. After the draft is written, stop, and go through it again as
+if it were someone else's text you were hired to de-slop. Expect to cut or rewrite several
+sentences. If you find nothing, you did not look hard enough.
+
+Run every item:
+
+1. Read the whole thing aloud. Cut any sentence you would not say to a knowledgeable friend.
+2. Go line by line against the AI-tells blacklist: em dashes, balance templates ("not just
+   X but Y", antithesis reversals like "what was a sneer became a banner"), summary or lesson
+   kickers at paragraph ends, rule-of-three padding, trailing -ing significance clauses,
+   banned words, throat-clearing, puffery, fake-strong copulas.
+3. Check the first sentence of every section: a concrete image or fact, not a definition or
+   a reversal?
+4. Check the last sentence of every paragraph: lands on a point, not a tidy takeaway?
+5. Confirm every factual claim has a source, or is flagged as interpretation or uncertain.
+6. Grep what is greppable: em dashes (expect zero), the banned words, "not just", "not only".
+
+Only after this pass is the writing done.
