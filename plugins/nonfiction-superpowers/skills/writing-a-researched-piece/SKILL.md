@@ -82,6 +82,9 @@ Run both passes, not one:
   the lede, is there a nut graf, does it scan, are charts honest and sourced), that each
   section opens and closes well in the agreed mode, and that every claim is sourced or flagged.
 
+For anything that matters, get an independent pass too: `reviewing-nonfiction` dispatches a
+fresh agent to adversarially check the draft, which catches what your own reread slides over.
+
 Tell-free is not the same as good. Do both or the piece ships dull or sloppy.
 
 ## Style sheet template

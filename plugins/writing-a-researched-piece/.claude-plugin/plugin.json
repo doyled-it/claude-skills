@@ -1,8 +1,0 @@
-{
-  "name": "writing-a-researched-piece",
-  "description": "Workflow for a researched written piece: pin the style, outline, research, draft, review. Pairs with writing-human-prose.",
-  "version": "1.0.0",
-  "author": { "name": "doyled-it" },
-  "license": "MIT",
-  "keywords": ["writing", "research", "nonfiction", "essays", "workflow", "explainer", "style"]
-}

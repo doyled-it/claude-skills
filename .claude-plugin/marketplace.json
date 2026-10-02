@@ -7,31 +7,13 @@
   },
   "plugins": [
     {
-      "name": "writing-human-prose",
-      "description": "Narrative-nonfiction craft plus an AI-tells blacklist, for writing prose that reads human and stays sourced.",
+      "name": "nonfiction-superpowers",
+      "description": "A superpowers-style workflow for nonfiction prose: brainstorm, design, research, draft, review, and edit, as a sequence of composable skills (orchestrated by writing-nonfiction). Includes the structure/data rules and the AI-slop blacklist.",
       "author": {
         "name": "doyled-it"
       },
       "category": "writing",
-      "source": "./plugins/writing-human-prose"
-    },
-    {
-      "name": "writing-a-researched-piece",
-      "description": "Workflow for a researched written piece: pin the style, outline, research, draft, then review for craft and AI tells. Pairs with writing-human-prose.",
-      "author": {
-        "name": "doyled-it"
-      },
-      "category": "writing",
-      "source": "./plugins/writing-a-researched-piece"
-    },
-    {
-      "name": "structuring-web-nonfiction",
-      "description": "Checkable, sourced rules for the shape of a web piece: lede, nut graf, inverted-pyramid order, scannability, honest data and charts, and per-form moves (science, data, argument, archive, guide).",
-      "author": {
-        "name": "doyled-it"
-      },
-      "category": "writing",
-      "source": "./plugins/structuring-web-nonfiction"
+      "source": "./plugins/nonfiction-superpowers"
     }
   ]
 }
