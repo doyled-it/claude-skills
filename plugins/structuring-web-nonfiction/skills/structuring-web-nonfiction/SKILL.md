@@ -91,6 +91,20 @@ and cutting AI tells, use `writing-human-prose`. For the end-to-end process, use
 
 Pick the form first. It sets the defaults.
 
+**Essay or narrative explainer** (for example, a context piece, or a history that makes an
+argument; the Cúlra page is this, not the archive form below)
+- Let the structure rise from the material; do not stamp a template on it (McPhee).
+- Write the lead first and treat it as a flashlight into the whole piece, a promise of its
+  substance and style. The lead and the ending talk to each other (McPhee).
+- Decide the ending before you write the middle. It answers the question the lead raised, and
+  leaves the reader one thought they did not have before (McPhee; Zinsser).
+- Default to chronology; switch to a thematic order only when it serves the argument, and
+  expect tension between the two (McPhee).
+- Hold unity of pronoun, tense, and mood; signal any shift with "but," "yet," or "however"
+  (Zinsser).
+- The ending should take the reader slightly by surprise yet seem exactly right. Give the
+  last sentence as much thought as the first, and know when to stop (Zinsser).
+
 **Science or research explainer** (for example, "what the research actually says")
 - Lead with the finding's meaning and its level of certainty, not the methodology.
 - Concept before term, no acronyms, accurate analogies.
@@ -111,7 +125,8 @@ Pick the form first. It sets the defaults.
 - Name things plainly; refuse euphemism that hides what happened (Orwell).
 - Give anyone you criticize a chance to respond, and attribute precisely (SPJ).
 
-**Cultural or exploratory archive** (for example, annotated lyrics, a subject explored)
+**Cultural or exploratory archive** (the annotation or reference form; the lyric pages are
+this, not the essay form above)
 - Research before writing; cite every claim; flag genuine uncertainty instead of smoothing it.
 - Keep fact, the subject's own framing, and your interpretation separate.
 - Present difficult history as cited history; do not glorify.
@@ -127,6 +142,9 @@ Pick the form first. It sets the defaults.
 - Poynter: the lede, and the nut graf (Chip Scanlan).
 - Cole Nussbaumer Knaflic, *Storytelling with Data*; Alberto Cairo, *How Charts Lie* and
   *The Truthful Art*; Edward Tufte; the Data Journalism Handbook.
+- John McPhee, *Draft No. 4* (structure rising from material, the lead as a flashlight, the
+  ending decided early, chronology versus theme); William Zinsser, *On Writing Well* (unity of
+  pronoun/tense/mood, endings).
 - Chip and Dan Heath, *Made to Stick*; Carl Zimmer, "Science Writing: Guidelines and
   Guidance"; The Open Notebook.
 - George Orwell, "Politics and the English Language"; the SPJ Code of Ethics; Rapoport's
