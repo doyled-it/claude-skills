@@ -20,14 +20,14 @@ Start with **writing-nonfiction** (the orchestrator). It runs the phases:
 
 The skills in the plugin:
 
-- **writing-nonfiction** — the orchestrator and entry point.
-- **writing-a-researched-piece** — pin the form and style, outline, research, draft, review.
-- **structuring-web-nonfiction** — the shape of a web piece: lede, nut graf, inverted pyramid,
+- **writing-nonfiction**: the orchestrator and entry point.
+- **writing-a-researched-piece**: pin the form and style, outline, research, draft, review.
+- **structuring-web-nonfiction**: the shape of a web piece: lede, nut graf, inverted pyramid,
   scannability (NN/g), honest data and charts (Knaflic, Cairo, Tufte), and a rule-set per form
   (essay, science, data, argument, archive, guide). Grounded in named sources.
-- **writing-human-prose** — sentence craft (Orwell, Zinsser, Strunk & White, McPhee, Clark,
+- **writing-human-prose**: sentence craft (Orwell, Zinsser, Strunk & White, McPhee, Clark,
   Gutkind), the AI-tells blacklist, and the mandatory proofread pass.
-- **reviewing-nonfiction** — the independent, adversarial review (fact-check, structure, data,
+- **reviewing-nonfiction**: the independent, adversarial review (fact-check, structure, data,
   craft, tells).
 
 ### Combining with code
