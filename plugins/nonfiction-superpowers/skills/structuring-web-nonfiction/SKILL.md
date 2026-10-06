@@ -43,11 +43,26 @@ and cutting AI tells, use `writing-human-prose`. For the end-to-end process, use
 - **One idea per paragraph, the idea in the first sentence.** Scanners read only the opening
   sentence of a paragraph.
 - **Descriptive subheads, not clever ones.** Reading only the headings should convey the gist
-  (NN/g layer-cake).
+  (NN/g layer-cake). A heading is a label, not a slogan: name the section for what it contains.
+  Kill the clever-title patterns, a balanced clause ("Naming the library is easy; everything
+  after it is hard"), a colon slogan ("Location: necessary, and still not sufficient"), a
+  trailing qualifier ("What the tools buy, once you know what to look up"), or a numbered motif
+  ("A second wall: ..."). The fixes are plain: "Cold run: by rung", "Finding the function",
+  "What tools add". The same ban applies to chart and callout titles that editorialize instead
+  of stating the takeaway.
 - **Front-load lines and subheads with the key word.** The first two words carry the scan
   (NN/g F-pattern).
 - **Use bullets, short paragraphs, white space; line length about 50 to 75 characters**
-  (NN/g chunking).
+  (NN/g chunking). When a paragraph is really a list (conditions, causes, steps, results),
+  make it a list. Prefer three tight bullets to one dense sentence that stacks them with
+  semicolons.
+- **Do not narrate an interactive element.** If a control, chart, or widget already shows
+  what it does, cut the paragraph that explains it. Give one line of orientation, then let the
+  reader use it. A two-knob explorer does not need a paragraph describing its two knobs; show,
+  do not tell.
+- **Set recurring proper nouns in a distinct inline style** (a monospace pill, small caps, a
+  subtle tint). Entities a reader scans for, model and product names, file paths, identifiers,
+  should stand out from surrounding prose so the eye can find and compare them.
 - **Cut marketese.** If deleting an adjective loses no fact, it was promotion (NN/g).
 - **Link text is specific and names its destination, keyword first.** Never "click here,"
   "read more," or "learn more." Make each link label unique (NN/g, the "4 Ss").

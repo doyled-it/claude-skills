@@ -90,6 +90,12 @@ These rules are lifted from writers and editors who taught the craft. Sources at
 - **Weasel attribution**: "experts agree", "studies show" with no named source.
 - **Fake-strong copulas**: "serves as / acts as / functions as" where "is" works.
 - **Synonym cycling** to dodge repetition. Repeat the plain word if it is right.
+- **Slogan headings and headlines**: a clever, balanced, or colon-slogan title where a plain
+  label belongs. Tells: a balanced clause ("Naming the library is easy; everything after it is
+  hard"), a colon slogan ("Location: necessary, and still not sufficient"), a trailing
+  qualifier ("What the tools buy, once you know what to look up"), a numbered motif ("A second
+  wall: ..."). Name the thing: "Cold run: by rung", "Finding the function", "What tools add".
+  (Section order and subhead structure live in structuring-web-nonfiction.)
 - **Formatting slop**: emoji in headings, random bold, needless headers.
 
 ## One worked example
@@ -113,6 +119,7 @@ After:
 
 - The sentence pivots on "not X but Y" or an antithesis.
 - The paragraph ends by telling the reader what to take away.
+- A heading or headline is a slogan or a balanced clause, not a plain label.
 - You reached for a word on the banned list.
 - There is an em dash.
 - A factual claim has no source behind it.
