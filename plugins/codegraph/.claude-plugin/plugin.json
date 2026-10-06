@@ -1,0 +1,8 @@
+{
+  "name": "codegraph",
+  "description": "Use CodeGraph effectively to orient in and navigate a codebase: sync the index first, query symbols/callers/impact instead of grep, and handle multi-repo and MCP-binding gotchas. Start with the using-codegraph skill.",
+  "version": "1.0.0",
+  "author": { "name": "doyled-it" },
+  "license": "MIT",
+  "keywords": ["codegraph", "code-intelligence", "code-navigation", "symbols", "callers", "callees", "impact", "index", "orientation", "grep-alternative", "monorepo", "multi-repo", "mcp"]
+}
