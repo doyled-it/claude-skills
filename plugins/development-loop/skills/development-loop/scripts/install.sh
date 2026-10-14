@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 # Install the development loop so the model always reaches for the right tools.
-# Three parts:
+# Four parts:
 #   1. Ensure the composed superpowers skills are installed and current (the loop
-#      references them by name), via the claude plugin CLI when available.
-#   2. Make every skill in this repo available to all tools (symlink into their
-#      discovery paths), by delegating to the repo's scripts/install-skills.sh.
-#   3. Write a managed "development conventions" block into your GLOBAL agent
+#      references them by name), from obra's upstream marketplace, via the claude
+#      plugin CLI when available.
+#   2. Register this repo's plugins for Claude Code (its native plugin path).
+#   3. Make this repo's skills available to the OTHER tools (Codex, opencode,
+#      Copilot, Gemini) by symlinking into ~/.agents/skills, via the repo's
+#      scripts/install-skills.sh. Claude Code is NOT symlinked (step 2 covers it),
+#      so tools that read both skill homes never list a skill twice.
+#   4. Write a managed "development conventions" block into your GLOBAL agent
 #      instructions, so the always-on habits (codegraph for understanding, the
 #      loop for features/bugfixes, cross-repo verification) load every session
 #      regardless of whether a skill auto-activates.
@@ -59,36 +63,54 @@ if [ "$PRINT_ONLY" = 1 ]; then
   exit 0
 fi
 
-# 1. Ensure the composed superpowers skills are installed and current. The loop
-#    references superpowers skills by name, so they must be present. On Claude Code
-#    they install as a plugin from the claude-plugins-official marketplace; refresh
-#    the catalog, then update (or install if missing). A restart applies the update.
+# 1. Ensure superpowers is installed from obra's UPSTREAM marketplace (7.x), not
+#    the slower Anthropic-curated channel. Add the marketplace, drop any install
+#    from claude-plugins-official so superpowers is registered once, then install
+#    (or update) from obra's channel. A restart applies the change.
+SP_MP="superpowers-marketplace"
 if command -v claude >/dev/null 2>&1; then
-  echo "Ensuring superpowers is installed and up to date..."
-  claude plugin marketplace update claude-plugins-official >/dev/null 2>&1 || true
-  if claude plugin update superpowers >/dev/null 2>&1; then
-    echo "  superpowers updated (restart your tool to apply)"
-  elif claude plugin install superpowers@claude-plugins-official -y >/dev/null 2>&1; then
-    echo "  superpowers installed (restart your tool to apply)"
+  echo "Ensuring superpowers (obra upstream) is installed and up to date..."
+  claude plugin marketplace add obra/superpowers-marketplace >/dev/null 2>&1 || true
+  claude plugin marketplace update "$SP_MP" >/dev/null 2>&1 || true
+  claude plugin uninstall "superpowers@claude-plugins-official" >/dev/null 2>&1 || true
+  if claude plugin install "superpowers@$SP_MP" -y >/dev/null 2>&1; then
+    echo "  superpowers installed from $SP_MP (restart your tool to apply)"
+  elif claude plugin update superpowers >/dev/null 2>&1; then
+    echo "  superpowers already present; updated (restart your tool to apply)"
   else
-    echo "  (could not auto-install superpowers; run: claude plugin install superpowers@claude-plugins-official)"
+    echo "  (could not auto-install superpowers; run: claude plugin marketplace add obra/superpowers-marketplace && claude plugin install superpowers@$SP_MP)"
   fi
 else
-  echo "Note: 'claude' CLI not found; install the superpowers skills for your tool:"
-  echo "  Claude Code     : claude plugin install superpowers@claude-plugins-official"
+  echo "Note: 'claude' CLI not found; install superpowers for your tool:"
+  echo "  Claude Code     : claude plugin marketplace add obra/superpowers-marketplace && claude plugin install superpowers@superpowers-marketplace"
   echo "  Codex / opencode: clone github.com/obra/superpowers and symlink its skills/* into ~/.agents/skills"
 fi
 
-# 2. Cross-tool skill install (delegate if available).
+# 2. Register this repo's plugins for Claude Code (its native plugin path), rather
+#    than symlinking them into ~/.claude/skills. Keeping Claude Code on the plugin
+#    path means tools that read both skill homes (opencode) never list a skill twice.
+if command -v claude >/dev/null 2>&1; then
+  echo "Installing this repo's plugins for Claude Code..."
+  claude plugin marketplace add doyled-it/claude-skills >/dev/null 2>&1 || true
+  claude plugin marketplace update doyled-it-skills >/dev/null 2>&1 || true
+  for p in development-loop codegraph cross-repo-completeness; do
+    claude plugin install "$p@doyled-it-skills" -y >/dev/null 2>&1 \
+      && echo "  installed $p" \
+      || echo "  (could not install $p; run: claude plugin install $p@doyled-it-skills)"
+  done
+fi
+
+# 3. Install this repo's skills for the OTHER tools (~/.agents/skills). Claude Code
+#    is covered by step 2, so install-skills.sh no longer touches ~/.claude/skills.
 REPO_ROOT="$(cd "$(dirname "$0")/../../../../.." && pwd)"
 if [ -f "$REPO_ROOT/scripts/install-skills.sh" ]; then
-  echo "Installing skills into tool paths..."
+  echo "Installing skills into ~/.agents/skills for other tools..."
   bash "$REPO_ROOT/scripts/install-skills.sh" || echo "  (skill symlinking step reported an issue; continuing)"
 else
   echo "Note: $REPO_ROOT/scripts/install-skills.sh not found; skipping skill symlinking."
 fi
 
-# 3. Managed global-conventions block (idempotent via markers).
+# 4. Managed global-conventions block (idempotent via markers).
 mkdir -p "$(dirname "$GLOBAL_FILE")"
 touch "$GLOBAL_FILE"
 if grep -qF "$BEGIN" "$GLOBAL_FILE"; then

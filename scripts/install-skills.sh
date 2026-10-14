@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
-# Install this repo's skills into the discovery paths of every agent tool, so the
-# SAME SKILL.md works in Claude Code, Codex, and opencode. The Agent Skills format
-# is an open standard (agentskills.io); only the install location differs per tool:
+# Install this repo's skills into the cross-runtime skills home so the SAME
+# SKILL.md works in Codex, opencode, Copilot, and Gemini. The Agent Skills format
+# is an open standard (agentskills.io); those tools discover global skills in
+# ~/.agents/skills/<name>.
 #
-#   Claude Code : this repo is a plugin marketplace (add it with /plugin), OR
-#                 ~/.claude/skills/<name>
-#   Codex       : ~/.agents/skills/<name>  (also scans .agents/skills up-tree)
-#   opencode    : ~/.agents/skills/<name>  (and ~/.claude/skills)
+# We symlink ONLY into ~/.agents/skills, not ~/.claude/skills. Claude Code is
+# handled as a plugin marketplace instead (see the development-loop install.sh,
+# which runs `claude plugin install <name>@doyled-it-skills`). opencode reads BOTH
+# ~/.agents/skills and ~/.claude/skills, so placing a skill in both homes would
+# make opencode list it twice; keeping Claude Code on the plugin path avoids any
+# duplication while still covering every tool.
 #
-# ~/.agents/skills is the cross-runtime home, so we symlink each skill there and
-# into ~/.claude/skills. Symlinks keep one source of truth: edit the skill here,
-# every tool sees the change. Re-run after adding a skill.
+# Symlinks keep one source of truth: edit the skill here, every tool sees it.
+# Re-run after adding a skill.
 #
 # Usage: bash scripts/install-skills.sh [--copy]
 #   --copy  copy instead of symlink (for tools/filesystems that do not follow links)
@@ -20,7 +22,7 @@ MODE="symlink"
 [ "${1:-}" = "--copy" ] && MODE="copy"
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-TARGETS=("$HOME/.agents/skills" "$HOME/.claude/skills")
+TARGETS=("$HOME/.agents/skills")
 
 link_one() {
   local src="$1" dest="$2"
