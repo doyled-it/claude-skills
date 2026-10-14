@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 # Install the development loop so the model always reaches for the right tools.
-# Two parts:
-#   1. Make every skill in this repo available to all tools (symlink into their
+# Three parts:
+#   1. Ensure the composed superpowers skills are installed and current (the loop
+#      references them by name), via the claude plugin CLI when available.
+#   2. Make every skill in this repo available to all tools (symlink into their
 #      discovery paths), by delegating to the repo's scripts/install-skills.sh.
-#   2. Write a managed "development conventions" block into your GLOBAL agent
+#   3. Write a managed "development conventions" block into your GLOBAL agent
 #      instructions, so the always-on habits (codegraph for understanding, the
 #      loop for features/bugfixes, cross-repo verification) load every session
 #      regardless of whether a skill auto-activates.
@@ -57,7 +59,27 @@ if [ "$PRINT_ONLY" = 1 ]; then
   exit 0
 fi
 
-# 1. Cross-tool skill install (delegate if available).
+# 1. Ensure the composed superpowers skills are installed and current. The loop
+#    references superpowers skills by name, so they must be present. On Claude Code
+#    they install as a plugin from the claude-plugins-official marketplace; refresh
+#    the catalog, then update (or install if missing). A restart applies the update.
+if command -v claude >/dev/null 2>&1; then
+  echo "Ensuring superpowers is installed and up to date..."
+  claude plugin marketplace update claude-plugins-official >/dev/null 2>&1 || true
+  if claude plugin update superpowers >/dev/null 2>&1; then
+    echo "  superpowers updated (restart your tool to apply)"
+  elif claude plugin install superpowers@claude-plugins-official -y >/dev/null 2>&1; then
+    echo "  superpowers installed (restart your tool to apply)"
+  else
+    echo "  (could not auto-install superpowers; run: claude plugin install superpowers@claude-plugins-official)"
+  fi
+else
+  echo "Note: 'claude' CLI not found; install the superpowers skills for your tool:"
+  echo "  Claude Code     : claude plugin install superpowers@claude-plugins-official"
+  echo "  Codex / opencode: clone github.com/obra/superpowers and symlink its skills/* into ~/.agents/skills"
+fi
+
+# 2. Cross-tool skill install (delegate if available).
 REPO_ROOT="$(cd "$(dirname "$0")/../../../../.." && pwd)"
 if [ -f "$REPO_ROOT/scripts/install-skills.sh" ]; then
   echo "Installing skills into tool paths..."
@@ -66,7 +88,7 @@ else
   echo "Note: $REPO_ROOT/scripts/install-skills.sh not found; skipping skill symlinking."
 fi
 
-# 2. Managed global-conventions block (idempotent via markers).
+# 3. Managed global-conventions block (idempotent via markers).
 mkdir -p "$(dirname "$GLOBAL_FILE")"
 touch "$GLOBAL_FILE"
 if grep -qF "$BEGIN" "$GLOBAL_FILE"; then

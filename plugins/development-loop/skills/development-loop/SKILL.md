@@ -113,8 +113,9 @@ change is done only when its whole surface is.
 
 Do not rely on this skill being auto-selected (skill auto-activation is
 unreliable, more so for smaller models). The durable trigger is your global agent
-instructions. Run `scripts/install.sh` once: it installs the skills into every
-tool's path and writes a managed "development conventions" block into your global
+instructions. Run `scripts/install.sh` once: it ensures the composed superpowers
+skills are installed and current, installs this repo's skills into every tool's
+path, and writes a managed "development conventions" block into your global
 instructions (for example `~/.claude/CLAUDE.md`) that tells the agent to always use
 codegraph for understanding and to run this loop for features and bugfixes. The
 block is tool-agnostic so you can paste it into Codex or opencode global config too.
