@@ -44,7 +44,7 @@ read -r -d '' BLOCK <<'EOF' || true
   sibling repos checked out alongside it, and verify the change's full cross-repo
   surface (API -> client -> UI -> docs, plus config, deploy, and docs in each repo)
   before calling it done.
-- Reach for the `development-loop`, `codegraph`, and `cross-repo-feature-audit` skills
+- Reach for the `development-loop`, `codegraph`, and `cross-repo-completeness` skills
   by name when the task matches; do not wait to be asked.
 EOF
 
