@@ -1,8 +1,11 @@
 # doyled-it skills
 
-A Claude Code marketplace of personal skills.
+A Claude Code marketplace of personal skills. The skills follow the Agent Skills open standard
+(agentskills.io), so the same `SKILL.md` runs in Claude Code, Codex, and opencode.
 
-## nonfiction-superpowers
+## Writing
+
+### nonfiction-superpowers
 
 A superpowers-style system for writing nonfiction: a phased workflow with gates, built as a
 sequence of composable skills. It is to prose what superpowers is to code.
@@ -30,45 +33,75 @@ The skills in the plugin:
 - **reviewing-nonfiction**: the independent, adversarial review (fact-check, structure, data,
   craft, tells).
 
-### Combining with code
-
 For an interactive data-story site, run `writing-nonfiction` for the research and prose and
-`superpowers` for the implementation (TDD, code review) under one plan. See the "Combining with
-code" section in the writing-nonfiction skill.
+`superpowers` for the implementation under one plan (see the "Combining with code" section in the
+writing-nonfiction skill).
 
-## cross-repo-completeness
+## Development
 
-Map and verify a feature's full surface across a multi-repo system, so a change does not ship
-wired in one repo and missing in the others (the API contract, client + types, UI, config,
-deploy, and docs per repo). Two modes: **setup** (scaffold a project's seam map + per-repo
-pointers + MR checklist, partly scripted) and **audit** (fan one reader per repo for a named
-feature, walk the end-to-end seam, report present/missing/undocumented slices). Pairs with the
-**codegraph** skill as its per-repo engine.
+Three composable skills for writing code. **development-loop** is the orchestrator; it uses the
+other two and the upstream superpowers skills.
+
+### development-loop
+
+A disciplined loop for any feature or bugfix, single-repo or multi-repo: understand (codegraph) ->
+brainstorm and design -> plan -> implement with TDD -> finish and verify the whole surface. It
+does not fork the superpowers skills, it sequences them (so their updates flow through) and adds
+two always-on habits plain prompting drops: ground understanding in codegraph, and verify a
+change's full cross-repo surface. Start with the **development-loop** skill. Its
+`scripts/install.sh` installs the skills into every tool's path, ensures the superpowers skills
+are installed and current, and writes a managed "development conventions" block into your global
+agent instructions so the habits load every session.
+
+### codegraph
+
+Use CodeGraph effectively to orient in and navigate a codebase: sync the index first, query
+symbols / callers / impact instead of grep, and handle the multi-repo and MCP-binding gotchas.
+Start with the **using-codegraph** skill.
+
+### cross-repo-completeness
+
+Map and verify a change's full surface across a multi-repo system, so it does not ship wired in
+one repo and missing in the others (the API contract, client + types, UI, config, deploy, and
+docs per repo). Two modes: **setup** (scaffold a project's seam map + per-repo pointers + MR
+checklist, partly scripted) and **audit** (fan one reader per repo for a named change, walk the
+end-to-end seam, report present/missing/undocumented slices). Pairs with the **codegraph** skill
+as its per-repo engine.
 
 ## Install
 
+As a Claude Code plugin marketplace:
+
 ```
 /plugin marketplace add doyled-it/claude-skills
+/plugin install development-loop@doyled-it-skills
+/plugin install codegraph@doyled-it-skills
+/plugin install cross-repo-completeness@doyled-it-skills
 /plugin install nonfiction-superpowers@doyled-it-skills
 ```
 
+Installing a plugin provides its skills; each loads when a matching task appears.
+
 ### Using these skills in Codex or opencode
 
-The skills follow the Agent Skills open standard (agentskills.io), so the same `SKILL.md` runs
-in Claude Code, Codex, and opencode; only the install path differs. To make every skill in this
-repo available to the other tools, symlink them into each tool's discovery path:
+Only the install path differs per tool. To make every skill in this repo available to the other
+tools, symlink them into each tool's discovery path:
 
 ```
 bash scripts/install-skills.sh      # symlinks into ~/.agents/skills and ~/.claude/skills
 ```
 
-Installing the plugin provides all five skills. Once installed, the workflow loads when a
-writing task matches.
+To turn the development loop on everywhere (symlinks + superpowers + the global conventions block):
+
+```
+bash plugins/development-loop/skills/development-loop/scripts/install.sh
+```
 
 ## Layout
 
 ```
 .claude-plugin/marketplace.json
-plugins/nonfiction-superpowers/.claude-plugin/plugin.json
-plugins/nonfiction-superpowers/skills/<skill>/SKILL.md
+plugins/<plugin>/.claude-plugin/plugin.json
+plugins/<plugin>/skills/<skill>/SKILL.md
+scripts/install-skills.sh
 ```
