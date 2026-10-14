@@ -36,11 +36,30 @@ For an interactive data-story site, run `writing-nonfiction` for the research an
 `superpowers` for the implementation (TDD, code review) under one plan. See the "Combining with
 code" section in the writing-nonfiction skill.
 
+## cross-repo-completeness
+
+Map and verify a feature's full surface across a multi-repo system, so a change does not ship
+wired in one repo and missing in the others (the API contract, client + types, UI, config,
+deploy, and docs per repo). Two modes: **setup** (scaffold a project's seam map + per-repo
+pointers + MR checklist, partly scripted) and **audit** (fan one reader per repo for a named
+feature, walk the end-to-end seam, report present/missing/undocumented slices). Pairs with the
+**codegraph** skill as its per-repo engine.
+
 ## Install
 
 ```
 /plugin marketplace add doyled-it/claude-skills
 /plugin install nonfiction-superpowers@doyled-it-skills
+```
+
+### Using these skills in Codex or opencode
+
+The skills follow the Agent Skills open standard (agentskills.io), so the same `SKILL.md` runs
+in Claude Code, Codex, and opencode; only the install path differs. To make every skill in this
+repo available to the other tools, symlink them into each tool's discovery path:
+
+```
+bash scripts/install-skills.sh      # symlinks into ~/.agents/skills and ~/.claude/skills
 ```
 
 Installing the plugin provides all five skills. Once installed, the workflow loads when a

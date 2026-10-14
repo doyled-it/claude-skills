@@ -23,6 +23,24 @@
       },
       "category": "development",
       "source": "./plugins/codegraph"
+    },
+    {
+      "name": "cross-repo-completeness",
+      "description": "Map and verify a change's full surface across a multi-repo system so a change does not ship wired in one repo and missing in the others. Start with the cross-repo-completeness skill. Pairs with codegraph (its per-repo engine).",
+      "author": {
+        "name": "doyled-it"
+      },
+      "category": "development",
+      "source": "./plugins/cross-repo-completeness"
+    },
+    {
+      "name": "development-loop",
+      "description": "A disciplined development loop for any feature or bugfix, single-repo or multi-repo: ground understanding in codegraph, compose the superpowers phases (brainstorm, plan, TDD, finish), and verify the full cross-repo surface. Start with the development-loop skill.",
+      "author": {
+        "name": "doyled-it"
+      },
+      "category": "development",
+      "source": "./plugins/development-loop"
     }
   ]
 }
