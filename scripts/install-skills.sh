@@ -43,6 +43,21 @@ link_one() {
   fi
 }
 
+# Older versions of this script also symlinked each skill into ~/.claude/skills.
+# Claude Code now gets these as plugins instead, and opencode reads BOTH homes, so
+# a leftover link there would make opencode list the skill twice (the very thing
+# this change removes). Clean up only the symlinks that still resolve back into
+# THIS repo; never touch a directory or a link the user pointed elsewhere.
+legacy_home="$HOME/.claude/skills"
+if [ -d "$legacy_home" ]; then
+  for link in "$legacy_home"/*; do
+    [ -L "$link" ] || continue
+    case "$(readlink "$link")" in
+      "$REPO_ROOT"/*) rm -f "$link"; echo "cleanup: removed stale link -> $link" ;;
+    esac
+  done
+fi
+
 found=0
 for skill_dir in "$REPO_ROOT"/plugins/*/skills/*/; do
   [ -f "$skill_dir/SKILL.md" ] || continue

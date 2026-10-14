@@ -64,21 +64,27 @@ if [ "$PRINT_ONLY" = 1 ]; then
 fi
 
 # 1. Ensure superpowers is installed from obra's UPSTREAM marketplace (7.x), not
-#    the slower Anthropic-curated channel. Add the marketplace, drop any install
-#    from claude-plugins-official so superpowers is registered once, then install
-#    (or update) from obra's channel. A restart applies the change.
+#    the slower Anthropic-curated channel. Install from obra FIRST; only once that
+#    succeeds, drop any claude-plugins-official copy so superpowers is registered
+#    once. If obra is unreachable, the existing install is left intact rather than
+#    removed. A restart applies the change.
 SP_MP="superpowers-marketplace"
 if command -v claude >/dev/null 2>&1; then
   echo "Ensuring superpowers (obra upstream) is installed and up to date..."
-  claude plugin marketplace add obra/superpowers-marketplace >/dev/null 2>&1 || true
-  claude plugin marketplace update "$SP_MP" >/dev/null 2>&1 || true
-  claude plugin uninstall "superpowers@claude-plugins-official" >/dev/null 2>&1 || true
+  # `add` fetches the catalog on first use; only refresh (update) if already added,
+  # so a fresh install does not fetch the same catalog twice.
+  claude plugin marketplace add obra/superpowers-marketplace >/dev/null 2>&1 \
+    || claude plugin marketplace update "$SP_MP" >/dev/null 2>&1 || true
   if claude plugin install "superpowers@$SP_MP" -y >/dev/null 2>&1; then
-    echo "  superpowers installed from $SP_MP (restart your tool to apply)"
-  elif claude plugin update superpowers >/dev/null 2>&1; then
-    echo "  superpowers already present; updated (restart your tool to apply)"
+    # obra copy is registered; now drop the Anthropic-curated one so it is registered once.
+    claude plugin uninstall "superpowers@claude-plugins-official" >/dev/null 2>&1 || true
+    # `plugin install` is a no-op (still exit 0) when already present, so update
+    # explicitly to pull obra's latest on a re-run.
+    claude plugin update superpowers >/dev/null 2>&1 || true
+    echo "  superpowers installed and current from $SP_MP (restart your tool to apply)"
   else
-    echo "  (could not auto-install superpowers; run: claude plugin marketplace add obra/superpowers-marketplace && claude plugin install superpowers@$SP_MP)"
+    echo "  (could not install superpowers from $SP_MP; left any existing install intact)"
+    echo "   run: claude plugin marketplace add obra/superpowers-marketplace && claude plugin install superpowers@$SP_MP"
   fi
 else
   echo "Note: 'claude' CLI not found; install superpowers for your tool:"
@@ -86,23 +92,35 @@ else
   echo "  Codex / opencode: clone github.com/obra/superpowers and symlink its skills/* into ~/.agents/skills"
 fi
 
-# 2. Register this repo's plugins for Claude Code (its native plugin path), rather
-#    than symlinking them into ~/.claude/skills. Keeping Claude Code on the plugin
-#    path means tools that read both skill homes (opencode) never list a skill twice.
+REPO_ROOT="$(cd "$(dirname "$0")/../../../../.." && pwd)"
+
+# 2. Register ALL of this repo's plugins for Claude Code (its native plugin path),
+#    rather than symlinking them into ~/.claude/skills. Keeping Claude Code on the
+#    plugin path means tools that read both skill homes (opencode) never list a
+#    skill twice. The list is derived from the repo's plugin dirs, so it always
+#    matches what step 3 exposes to the other tools and never drifts by hand.
 if command -v claude >/dev/null 2>&1; then
   echo "Installing this repo's plugins for Claude Code..."
-  claude plugin marketplace add doyled-it/claude-skills >/dev/null 2>&1 || true
-  claude plugin marketplace update doyled-it-skills >/dev/null 2>&1 || true
-  for p in development-loop codegraph cross-repo-completeness; do
+  claude plugin marketplace add doyled-it/claude-skills >/dev/null 2>&1 \
+    || claude plugin marketplace update doyled-it-skills >/dev/null 2>&1 || true
+  for plugin_json in "$REPO_ROOT"/plugins/*/.claude-plugin/plugin.json; do
+    [ -f "$plugin_json" ] || continue
+    p="$(basename "$(dirname "$(dirname "$plugin_json")")")"
     claude plugin install "$p@doyled-it-skills" -y >/dev/null 2>&1 \
       && echo "  installed $p" \
       || echo "  (could not install $p; run: claude plugin install $p@doyled-it-skills)"
   done
+else
+  echo "Note: 'claude' CLI not found; Claude Code plugin registration skipped."
+  echo "  Install later with: claude plugin marketplace add doyled-it/claude-skills"
+  echo "  then: claude plugin install <plugin>@doyled-it-skills"
 fi
 
 # 3. Install this repo's skills for the OTHER tools (~/.agents/skills). Claude Code
 #    is covered by step 2, so install-skills.sh no longer touches ~/.claude/skills.
-REPO_ROOT="$(cd "$(dirname "$0")/../../../../.." && pwd)"
+#    Note: step 2 installs plugins from the PUBLISHED marketplace (the repo's remote
+#    default branch), not this working tree, so to test local plugin edits run the
+#    plugin from its path rather than relying on `claude plugin install`.
 if [ -f "$REPO_ROOT/scripts/install-skills.sh" ]; then
   echo "Installing skills into ~/.agents/skills for other tools..."
   bash "$REPO_ROOT/scripts/install-skills.sh" || echo "  (skill symlinking step reported an issue; continuing)"
