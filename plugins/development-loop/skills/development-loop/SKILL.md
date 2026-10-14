@@ -46,11 +46,11 @@ Decide once, up front, it changes two phases:
 
 ### 1. Understand (always codegraph)
 
-**REQUIRED:** orient with codegraph, not grep. codegraph is a CLI/MCP tool, not
-an installable skill: if the `codegraph` skill is present use it, otherwise run
+**REQUIRED:** orient with codegraph, not grep. codegraph is both a CLI/MCP tool
+and a skill (`using-codegraph`): use the skill if it is installed, otherwise run
 the tool directly (`codegraph sync .`, then `query` / `callers` / `callees` /
-`impact`). Sync the index first, confirm it is the repo you are editing, then
-query symbols instead of grep. In a multi-repo system, do this per repo; run it
+`impact`). Either way, sync the index first, confirm it is the repo you are
+editing, then query symbols instead of grep. In a multi-repo system, do this per repo; run it
 again before spawning any subagent that will explore code, and again after your
 own edits, so callers/impact reflect the current tree. If a repo has no index,
 that is the orientation gap to close first.
