@@ -6,8 +6,10 @@ boilerplate files into each repo every time, so the output does not depend on a
 model improvising them. The JUDGMENT part (filling in the actual repo map and
 seams in cross-repo-features.md) is left to the agent after this runs.
 
-Run it once per project. It is idempotent: an existing file is left alone unless
---force is passed.
+Run it once per project. It is idempotent: an existing MR/PR template,
+CONTRIBUTING, or guide is left alone unless --force is passed. An existing README
+is never overwritten; its one-line pointer is appended once (and skipped if
+already present), regardless of --force.
 
 Usage:
   python scaffold.py --hub PATH --repo PATH [--repo PATH ...] \
@@ -20,7 +22,8 @@ Usage:
                 github  -> .github/pull_request_template.md.
   --remote-base Clone base, e.g. git@gitlab.example.com:group or
                 git@github.com:org (used in the "clone a sibling" snippet).
-  --force       Overwrite existing scaffold files.
+  --force       Overwrite an existing MR/PR template, CONTRIBUTING, or guide.
+                An existing README is never overwritten (pointer-appended once).
 
 Example:
   python scaffold.py --hub ../deploy \
@@ -178,7 +181,8 @@ def main():
         readme = os.path.join(repo, "README.md")
         pointer = README_POINTER.format(repo=name)
         if os.path.exists(readme):
-            existing = open(readme).read()
+            with open(readme) as rf:
+                existing = rf.read()
             if "Part of a multi-repo system" not in existing:
                 with open(readme, "a") as f:
                     f.write(pointer)
@@ -189,8 +193,11 @@ def main():
             write(readme, f"# {name}\n{pointer}", args.force)
 
     print(f"{hub_name} (hub):")
-    write(os.path.join(hub, "docs/cross-repo-features.md"),
-          guide_skeleton(hub_name, repo_names, args.remote_base), args.force)
+    if os.path.isdir(hub):
+        write(os.path.join(hub, "docs/cross-repo-features.md"),
+              guide_skeleton(hub_name, repo_names, args.remote_base), args.force)
+    else:
+        print(f"  skip (not a dir): {hub}")
 
     print("\nDone. Now fill in the TODOs in "
           f"{hub_name}/docs/cross-repo-features.md with the real repo map and seams, "

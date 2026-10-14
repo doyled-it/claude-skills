@@ -1,6 +1,6 @@
 ---
 name: using-codegraph
-description: Use when orienting in, navigating, or mapping a codebase that has a CodeGraph index (a .codegraph/ directory) — finding symbols, callers/callees, or change impact — instead of grep/find, and especially before spawning subagents that will explore code.
+description: Use when orienting in, navigating, or mapping a codebase that has a CodeGraph index (a .codegraph/ directory) to find symbols, callers/callees, or change impact instead of grep/find, and especially before spawning subagents that will explore code.
 ---
 
 # Using CodeGraph
@@ -15,15 +15,15 @@ CodeGraph is a precomputed per-repo index of every symbol, edge, and file (a `.c
 
 - Orienting in an unfamiliar repo, or locating a symbol / its callers / its blast radius.
 - Before editing a symbol (check `impact` and which tests cover it).
-- **Before spawning any subagent that will explore code** — sync the target repo first so the subagent is not querying a stale index.
+- **Before spawning any subagent that will explore code**: sync the target repo first so the subagent is not querying a stale index.
 - After your own edits, and before any reachability or dead-code judgment.
 
-Skip it when there is no `.codegraph/` directory (indexing is the repo owner's choice) — use normal search then.
+Skip it when there is no `.codegraph/` directory (indexing is the repo owner's choice); use normal search then.
 
 ## The workflow
 
-1. `codegraph status .` — is there an index, and is it current?
-2. `codegraph init .` (first time) or `codegraph sync .` (stale). Sync is cheap (seconds) — run it freely.
+1. `codegraph status .`: is there an index, and is it current?
+2. `codegraph init .` (first time) or `codegraph sync .` (stale). Sync is cheap (seconds), so run it freely.
 3. `codegraph query <name>` / `codegraph explore "<question or symbols>"` to locate.
 4. `codegraph callers|callees|impact <symbol>`, `codegraph affected <files...>` to traverse.
 5. Only then open the specific files the graph pointed at.
@@ -47,10 +47,10 @@ Run any subcommand with `--help` for flags.
 
 ## Gotchas that cause silent wrong answers
 
-- **One index per repo.** Each repo has its own `.codegraph/` pointed at itself. In a multi-repo workspace, `cd` into the *specific* repo before running codegraph — do not assume a shared index covers the repo you are editing.
-- **The MCP server is bound to ONE project.** If a `codegraph_explore` MCP tool is available, it points at whatever project its server was started against — not necessarily the repo you are in. When its results look like a different project (unfamiliar files, the wrong language), it is pointed elsewhere: stop trusting it and use the **CLI** `codegraph explore` from the correct repo. In multi-repo setups the CLI is the reliable default; the MCP tool is a convenience only when it targets the right repo.
+- **One index per repo.** Each repo has its own `.codegraph/` pointed at itself. In a multi-repo workspace, `cd` into the *specific* repo before running codegraph; do not assume a shared index covers the repo you are editing.
+- **The MCP server is bound to ONE project.** If a `codegraph_explore` MCP tool is available, it points at whatever project its server was started against, not necessarily the repo you are in. When its results look like a different project (unfamiliar files, the wrong language), it is pointed elsewhere: stop trusting it and use the **CLI** `codegraph explore` from the correct repo. In multi-repo setups the CLI is the reliable default; the MCP tool is a convenience only when it targets the right repo.
 - **A "no results" / "no callers" from a stale index is worthless.** It can lead you to delete live code. Sync before trusting a negative answer.
-- **Worktrees need their own index.** A git worktree is a separate checkout; run `codegraph init -i` / `sync .` inside it, and sync again after edits before any reachability call.
+- **Worktrees need their own index.** A git worktree is a separate checkout; run `codegraph init .` / `sync .` inside it, and sync again after edits before any reachability call.
 - **Before a subagent dispatch**, sync the target repo; if the MCP tool might be mis-pointed, tell the subagent to use the CLI or fall back to direct reads.
 
 ## Common mistakes

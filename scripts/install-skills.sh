@@ -25,7 +25,15 @@ TARGETS=("$HOME/.agents/skills" "$HOME/.claude/skills")
 link_one() {
   local src="$1" dest="$2"
   mkdir -p "$(dirname "$dest")"
-  rm -rf "$dest"
+  # Only replace our own managed symlinks. If something real (a directory, or a
+  # skill the user authored by hand) sits at this name, do NOT clobber it: warn
+  # and skip, so a name collision can never destroy the user's own work. Remove
+  # it by hand if you want this repo's skill to take the name.
+  if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+    echo "  skip    -> $dest (exists and is not a managed symlink; remove it to replace)"
+    return 0
+  fi
+  rm -f "$dest"
   if [ "$MODE" = "copy" ]; then
     cp -R "$src" "$dest"; echo "  copied  -> $dest"
   else

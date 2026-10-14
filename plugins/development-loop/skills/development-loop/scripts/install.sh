@@ -98,7 +98,10 @@ if grep -qF "$BEGIN" "$GLOBAL_FILE"; then
     $0==e {skip=0; next}
     skip!=1 {print}
   ' "$GLOBAL_FILE" > "$tmp"
-  mv "$tmp" "$GLOBAL_FILE"
+  # Write back in place (not mv) so the file keeps its own permissions; mv would
+  # give it mktemp's 0600 and silently tighten a 0644 global-instructions file.
+  cat "$tmp" > "$GLOBAL_FILE"
+  rm -f "$tmp"
   echo "Updated the development-conventions block in $GLOBAL_FILE"
 else
   printf '\n%s\n' "$FULL_BLOCK" >> "$GLOBAL_FILE"
