@@ -14,6 +14,15 @@
       },
       "category": "writing",
       "source": "./plugins/nonfiction-superpowers"
+    },
+    {
+      "name": "cross-repo-completeness",
+      "description": "Map and verify a change's full surface across a multi-repo system so a change does not ship wired in one repo and missing in the others. Start with the cross-repo-completeness skill. Pairs with codegraph (its per-repo engine).",
+      "author": {
+        "name": "doyled-it"
+      },
+      "category": "development",
+      "source": "./plugins/cross-repo-completeness"
     }
   ]
 }
