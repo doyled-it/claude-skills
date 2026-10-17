@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
 # Install the development loop so the model always reaches for the right tools.
-# Four parts:
+# Five parts:
 #   1. Ensure the composed superpowers skills are installed and current (the loop
 #      references them by name), from obra's upstream marketplace, via the claude
 #      plugin CLI when available.
-#   2. Register this repo's plugins for Claude Code (its native plugin path).
-#   3. Make this repo's skills available to the OTHER tools (Codex, opencode,
+#   2. Ensure the codegraph CLI is installed and current
+#      (github.com/colbymchenry/codegraph), with its MCP server wired into every
+#      detected agent and its usage telemetry turned off. The loop's Understand
+#      phase needs the tool, not just the skill that describes it.
+#   3. Register this repo's plugins for Claude Code (its native plugin path).
+#   4. Make this repo's skills available to the OTHER tools (Codex, opencode,
 #      Copilot, Gemini) by symlinking into ~/.agents/skills, via the repo's
-#      scripts/install-skills.sh. Claude Code is NOT symlinked (step 2 covers it),
+#      scripts/install-skills.sh. Claude Code is NOT symlinked (step 3 covers it),
 #      so tools that read both skill homes never list a skill twice.
-#   4. Write a managed "development conventions" block into your GLOBAL agent
+#   5. Write a managed "development conventions" block into your GLOBAL agent
 #      instructions, so the always-on habits (codegraph for understanding, the
 #      loop for features/bugfixes, cross-repo verification) load every session
 #      regardless of whether a skill auto-activates.
@@ -19,15 +23,20 @@
 # config (Claude Code: ~/.claude/CLAUDE.md; Codex: ~/.codex/AGENTS.md; opencode:
 # your global AGENTS.md). This script writes it to ~/.claude/CLAUDE.md by default.
 #
-# Usage: bash install.sh [--global-file PATH] [--print-only]
+# Usage: bash install.sh [--global-file PATH] [--print-only] [--skip-codegraph]
+#                        [--keep-codegraph-telemetry]
 
 set -euo pipefail
 GLOBAL_FILE="$HOME/.claude/CLAUDE.md"
 PRINT_ONLY=0
+SKIP_CODEGRAPH=0
+KEEP_CG_TELEMETRY=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --global-file) GLOBAL_FILE="$2"; shift 2 ;;
     --print-only) PRINT_ONLY=1; shift ;;
+    --skip-codegraph) SKIP_CODEGRAPH=1; shift ;;
+    --keep-codegraph-telemetry) KEEP_CG_TELEMETRY=1; shift ;;
     *) echo "unknown arg: $1" >&2; exit 2 ;;
   esac
 done
@@ -42,7 +51,9 @@ read -r -d '' BLOCK <<'EOF' || true
   repo (a `.codegraph/` directory), sync the index first, confirm it is the repo you
   are editing, then query symbols / callers / callees / impact instead of grep or find,
   especially before spawning subagents that explore code. A stale or wrong-repo index
-  is worse than none; re-sync often and after your own edits.
+  is worse than none; re-sync often and after your own edits. If the `codegraph`
+  command is missing, install it (github.com/colbymchenry/codegraph, npm package
+  `@colbymchenry/codegraph`) rather than falling back to grep.
 - For ANY feature or bugfix, follow the development loop before writing code:
   understand (codegraph) -> brainstorm and design -> plan -> implement with TDD -> finish.
   Do not jump straight to implementation.
@@ -92,9 +103,60 @@ else
   echo "  Codex / opencode: clone github.com/obra/superpowers and symlink its skills/* into ~/.agents/skills"
 fi
 
+# 2. Ensure the codegraph CLI (github.com/colbymchenry/codegraph). npm is preferred
+#    because its releases carry npm provenance; without npm, fall back to the
+#    project's own installer, which links the binary into ${CODEGRAPH_BIN_DIR:-~/.local/bin}.
+#    An existing install is upgraded in place (`codegraph upgrade` also refreshes the
+#    agent wiring). A fresh install wires the MCP server into every detected agent.
+#    Telemetry goes off first so nothing is sent from the first run; pass
+#    --keep-codegraph-telemetry to leave the upstream default alone.
+CG_PKG="@colbymchenry/codegraph"
+CG_INSTALLER="https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.sh"
+CG_BIN=""
+if [ "$SKIP_CODEGRAPH" = 1 ]; then
+  echo "Skipping the codegraph CLI (--skip-codegraph)."
+elif command -v codegraph >/dev/null 2>&1; then
+  CG_BIN="$(command -v codegraph)"
+  echo "Ensuring the codegraph CLI is current..."
+  if "$CG_BIN" upgrade >/dev/null 2>&1; then
+    echo "  codegraph $("$CG_BIN" --version) is current"
+  else
+    echo "  (could not upgrade codegraph; left the installed version in place)"
+  fi
+else
+  echo "Installing the codegraph CLI (github.com/colbymchenry/codegraph)..."
+  if command -v npm >/dev/null 2>&1 && npm install -g "$CG_PKG" >/dev/null 2>&1; then
+    CG_BIN="$(command -v codegraph || true)"
+  elif command -v curl >/dev/null 2>&1 && curl -fsSL "$CG_INSTALLER" | sh >/dev/null 2>&1; then
+    # The installer links into a dir that may not be on this shell's PATH yet.
+    CG_BIN="$(command -v codegraph || echo "${CODEGRAPH_BIN_DIR:-$HOME/.local/bin}/codegraph")"
+  fi
+  if [ -n "$CG_BIN" ] && [ -x "$CG_BIN" ]; then
+    [ "$KEEP_CG_TELEMETRY" = 1 ] || "$CG_BIN" telemetry off >/dev/null 2>&1 || true
+    if "$CG_BIN" install --yes >/dev/null 2>&1; then
+      echo "  installed codegraph $("$CG_BIN" --version) and wired it into your agents (restart them to load the MCP server)"
+    else
+      echo "  installed codegraph $("$CG_BIN" --version); wiring agents failed, run: codegraph install"
+    fi
+    case ":$PATH:" in
+      *":$(dirname "$CG_BIN"):"*) ;;
+      *) echo "  note: add $(dirname "$CG_BIN") to your PATH so 'codegraph' resolves in new shells" ;;
+    esac
+  else
+    CG_BIN=""
+    echo "  (could not install codegraph; install it by hand:"
+    echo "     npm install -g $CG_PKG"
+    echo "     or: curl -fsSL $CG_INSTALLER | sh   then: codegraph install)"
+  fi
+fi
+# Re-assert the telemetry choice on every run, so an upgrade cannot quietly reset it.
+if [ -n "$CG_BIN" ] && [ "$KEEP_CG_TELEMETRY" = 0 ]; then
+  "$CG_BIN" telemetry off >/dev/null 2>&1 || true
+fi
+
 REPO_ROOT="$(cd "$(dirname "$0")/../../../../.." && pwd)"
 
-# 2. Register ALL of this repo's plugins for Claude Code (its native plugin path),
+# 3. Register ALL of this repo's plugins for Claude Code (its native plugin path),
 #    rather than symlinking them into ~/.claude/skills. Keeping Claude Code on the
 #    plugin path means tools that read both skill homes (opencode) never list a
 #    skill twice. The list is derived from the repo's plugin dirs, so it always

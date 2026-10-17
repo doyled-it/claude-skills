@@ -59,6 +59,16 @@ Use CodeGraph effectively to orient in and navigate a codebase: sync the index f
 symbols / callers / impact instead of grep, and handle the multi-repo and MCP-binding gotchas.
 Start with the **using-codegraph** skill.
 
+The skill drives the `codegraph` CLI from [colbymchenry/codegraph](https://github.com/colbymchenry/codegraph),
+which the plugin does not bundle. The development-loop installer below installs it for you. By hand:
+
+```
+npm install -g @colbymchenry/codegraph   # or: curl -fsSL https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.sh | sh
+codegraph telemetry off                  # optional; it sends anonymous usage stats by default
+codegraph install                        # wire its MCP server into your agents
+cd your-project && codegraph init        # build the index (one per repo)
+```
+
 ### cross-repo-completeness
 
 Map and verify a change's full surface across a multi-repo system, so it does not ship wired in
@@ -91,7 +101,9 @@ tools, symlink them into each tool's discovery path:
 bash scripts/install-skills.sh      # symlinks into ~/.agents/skills and ~/.claude/skills
 ```
 
-To turn the development loop on everywhere (symlinks + superpowers + the global conventions block):
+To turn the development loop on everywhere (symlinks + superpowers + the codegraph CLI + the global
+conventions block). It turns codegraph's telemetry off; pass `--keep-codegraph-telemetry` to leave it
+on, or `--skip-codegraph` to skip the CLI entirely:
 
 ```
 bash plugins/development-loop/skills/development-loop/scripts/install.sh
