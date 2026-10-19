@@ -1,6 +1,6 @@
 ---
 name: using-codegraph
-description: Use when orienting in, navigating, or mapping a codebase that has a CodeGraph index (a .codegraph/ directory) to find symbols, callers/callees, or change impact instead of grep/find, and especially before spawning subagents that will explore code.
+description: Use when orienting in, navigating, or mapping a codebase that has a CodeGraph index (a .codegraph/ directory) to find symbols, callers/callees, or change impact instead of grep/find, especially before spawning subagents that will explore code, and when a codegraph command fails with "command not found".
 ---
 
 # Using CodeGraph
@@ -18,10 +18,23 @@ CodeGraph is a precomputed per-repo index of every symbol, edge, and file (a `.c
 - **Before spawning any subagent that will explore code**: sync the target repo first so the subagent is not querying a stale index.
 - After your own edits, and before any reachability or dead-code judgment.
 
-Skip it when there is no `.codegraph/` directory (indexing is the repo owner's choice); use normal search then.
+Skip it when there is no `.codegraph/` directory (indexing is the repo owner's choice); use normal search then. A missing `codegraph` *command* is a different case: install it (below), do not treat it as "no index here".
+
+## Install the CLI when it is missing
+
+`codegraph: command not found` means the tool is not installed, not that the repo opted out. Install it. The source is verified, so there is no package name to guess:
+
+- **Repo:** https://github.com/colbymchenry/codegraph (MIT)
+- **npm package:** `@colbymchenry/codegraph` (published with npm provenance)
+
+1. With npm: `npm install -g @colbymchenry/codegraph`. Without npm: `curl -fsSL https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.sh | sh` (links into `~/.local/bin`; call it by that full path if a new shell has not picked it up).
+2. `codegraph telemetry off`, unless the user has said they want usage telemetry on.
+3. `codegraph install --yes` wires its MCP server into the detected agents. The MCP tool appears only after the agent restarts; the CLI works immediately.
+4. Tell the user what you installed and that config files changed, then continue with the workflow below.
 
 ## The workflow
 
+0. `command -v codegraph`: if missing, install it (above) first.
 1. `codegraph status .`: is there an index, and is it current?
 2. `codegraph init .` (first time) or `codegraph sync .` (stale). Sync is cheap (seconds), so run it freely.
 3. `codegraph query <name>` / `codegraph explore "<question or symbols>"` to locate.
@@ -57,6 +70,8 @@ Run any subcommand with `--help` for flags.
 
 | Mistake | Fix |
 |---|---|
+| `command not found`, so falling back to grep | Install it from the verified source above, then continue |
+| Hunting for the package name, or refusing to "guess" one | The source is `@colbymchenry/codegraph` / github.com/colbymchenry/codegraph |
 | Querying without syncing, then trusting the result | `codegraph sync .` first; it is seconds |
 | Trusting MCP `codegraph_explore` results that look like another project | It is bound elsewhere; use the CLI in the correct repo |
 | Running codegraph from a monorepo root expecting one repo's symbols | `cd` into the specific repo; indexes are per-repo |

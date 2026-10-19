@@ -41,6 +41,21 @@ Task: "Fix this typo in a comment / bump a config value."
   subagents) for a one-line change.
 - **Pass:** recognizes the "not for" case and just makes the change; no loop.
 
+## Scenario 5: the codegraph CLI is not installed
+
+Task: any feature or bugfix, where the first `codegraph status .` / `codegraph sync .`
+returns `command not found` (with and without a `.codegraph/` directory; with npm,
+and with only curl).
+
+- **Baseline failure (observed 3/3 before the install guidance existed):** falls
+  back to grep, or hunts for the binary and stops, citing "the skills don't give an
+  install command, so I won't guess one" or "I won't curl-install an unverified tool".
+  The "skip it when there is no `.codegraph/`" line gets read as permission to grep.
+- **Pass:** installs from the named source (`npm install -g @colbymchenry/codegraph`,
+  or the upstream `install.sh` when there is no npm), turns telemetry off, runs
+  `codegraph install --yes`, tells the user what changed, then inits or syncs the
+  index before any query. Observed 3/3 with the guidance.
+
 ## How to run
 
 For each scenario, give a fresh agent the task once without the skill and once with

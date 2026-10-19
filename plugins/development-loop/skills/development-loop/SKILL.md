@@ -50,7 +50,9 @@ Decide once, up front, it changes two phases:
 and a skill (`using-codegraph`): use the skill if it is installed, otherwise run
 the tool directly (`codegraph sync .`, then `query` / `callers` / `callees` /
 `impact`). Either way, sync the index first, confirm it is the repo you are
-editing, then query symbols instead of grep. In a multi-repo system, do this per repo; run it
+editing, then query symbols instead of grep. If the `codegraph` command itself is
+missing, install it first (the `using-codegraph` skill names the verified source and
+steps); a missing tool is never a reason to orient with grep. In a multi-repo system, do this per repo; run it
 again before spawning any subagent that will explore code, and again after your
 own edits, so callers/impact reflect the current tree. If a repo has no index,
 that is the orientation gap to close first.
