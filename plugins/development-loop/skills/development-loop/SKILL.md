@@ -1,127 +1,117 @@
 ---
 name: development-loop
-description: Use when starting any feature, enhancement, or bugfix in a codebase (one repo, or several repos that form one system), before writing code; when tempted to jump straight to editing; when you need to understand unfamiliar code before changing it; or when a change may span a backend and a separate frontend, service, or deploy repo.
-compatibility: Composes the superpowers skills (brainstorming, writing-plans, subagent-driven-development, finishing-a-development-branch) and the codegraph and cross-repo-completeness skills. Reads the Agent Skills open standard (Claude Code, Codex, opencode).
+description: Use when starting a feature, enhancement, or bugfix before writing code; when tempted to edit before understanding the repository; or when a change crosses backend, frontend, service, and deploy repositories.
+compatibility: Composes upstream Superpowers plus using-codegraph and cross-repo-completeness. Invoke namespaced plugin names when the runtime exposes them, or the bare skill names for a shared-skills fallback.
 ---
 
 # Development loop
 
-## Overview
+## Entry and routing
 
-The disciplined path for any feature or bugfix. It does not replace the
-superpowers skills; it SEQUENCES them and adds two always-on habits that plain
-prompting drops: **ground every code-understanding step in codegraph**, and
-**verify a change's full surface across repos** when the project spans more than
-one. Works the same for a single repo (the cross-repo steps are simply skipped)
-and for a multi-repo system.
+Invoke this skill explicitly for feature and bugfix work. In a native plugin
+runtime its name is `development-loop:development-loop`; a shared installation
+exposes `development-loop`. Use the skill loader the runtime provides, or read
+the named SKILL.md when there is no loader. Merely mentioning a skill in a plan
+does not invoke it.
 
-**Core principle: understand before you change, and finish the whole surface, not
-just the file you touched.** The two failure modes this prevents are exploring
-code with grep instead of the index (slow, and blind to dynamic-dispatch and
-cross-repo calls), and shipping a change wired in one place and missing in the
-others.
+Compose upstream Superpowers by name. Do not copy or modify its skills. If a
+required skill is absent, report that limitation and carry out its phase directly.
+Do not claim an invocation that did not happen.
 
-Compose, do not fork: this skill references the upstream skills by name, so their
-updates flow through. If an upstream skill is unavailable, do that phase directly
-and continue.
+A typo or doc/config edit with no behavior change may skip the design and plan
+loop. A code-understanding question still uses `using-codegraph`; it simply does
+not need an implementation plan. If scope and design are already approved, resume
+the approved stage instead of asking for the same approval again.
 
-## When to use
+## 1. Understand
 
-- Starting any feature, enhancement, or bugfix, before writing code.
-- Any repo shape: one repo, or several repos that make one system.
+**REQUIRED SUB-SKILL:** invoke `using-codegraph` (native name
+`codegraph:using-codegraph`) before locating or changing code. Close index gaps:
+`codegraph status .`, `codegraph init .` when missing, then `codegraph sync .`
+before querying. Confirm the project path matches the current checkout. Repeat
+after edits and before handing exploration to another reader.
 
-Not for: a one-line typo/doc/config tweak with no behavior change (just do it), or
-a pure question (answer it).
+An explicit user no-index restriction overrides the default. If index writes
+are prohibited, inspect source directly and report the unavailable graph evidence.
+An index may be empty or partial for unsupported file types. After querying,
+use direct inspection for unsupported source and state the limitation; do not
+invent graph results. Initialization covers the relevant checkout, not a crawl
+of unrelated workspaces. Keep `.codegraph/` untracked through existing ignores or
+an allowed local exclude; do not edit product files in source-read-only work.
 
-## First: is this one repo or several?
+For a multi-repo system, start from its hub (integration/deploy repo) with the
+required sibling checkouts. Read the hub's `docs/cross-repo-features.md`, when
+present. Invoke `cross-repo-completeness` (native name
+`cross-repo-completeness:cross-repo-completeness`) to identify repos and seams,
+and invoke `using-codegraph` in each relevant repo. Never assume the hub index
+covers a sibling.
 
-Decide once, up front, it changes two phases:
+For a bug or unexpected test failure, invoke `superpowers:systematic-debugging`
+before proposing a fix. Trace the cause and reproduce the behavior.
 
-- **Single repo:** run the loop as written, skip the steps marked (multi-repo).
-- **Multi-repo system:** start from the **hub repo** (the integration/deploy repo)
-  with the sibling repos checked out alongside it; clone a missing one before
-  starting. The seam map is the hub's `docs/cross-repo-features.md`.
+## 2. Brainstorm and design
 
-## The loop
+**REQUIRED SUB-SKILL:** invoke `superpowers:brainstorming` for new work to refine
+requirements and settle the design before implementation. Scale the design to the
+task: a bounded change can have a short in-chat design; architectural work needs
+the appropriate written specification. Follow user restrictions on saving or
+committing generated planning documents.
 
-### 1. Understand (always codegraph)
+For multi-repo work, use `cross-repo-completeness` at design time. List the real
+surface per repo: producer and contract, consuming client and types, UI and docs,
+configuration, deployment, and tests. Mark inapplicable slices N/A with reasons.
 
-**REQUIRED:** orient with codegraph, not grep. codegraph is both a CLI/MCP tool
-and a skill (`using-codegraph`): use the skill if it is installed, otherwise run
-the tool directly (`codegraph sync .`, then `query` / `callers` / `callees` /
-`impact`). Either way, sync the index first, confirm it is the repo you are
-editing, then query symbols instead of grep. If the `codegraph` command itself is
-missing, install it first (the `using-codegraph` skill names the verified source and
-steps); a missing tool is never a reason to orient with grep. In a multi-repo system, do this per repo; run it
-again before spawning any subagent that will explore code, and again after your
-own edits, so callers/impact reflect the current tree. If a repo has no index,
-that is the orientation gap to close first.
+## 3. Plan
 
-### 2. Brainstorm and design
+**REQUIRED SUB-SKILL:** invoke `superpowers:writing-plans`. Break the approved
+design into independently testable tasks. Include every affected cross-repo slice
+and give each touched repo its own branch. Link dependent PRs or MRs when remote
+publication is authorized; track deferred slices explicitly.
 
-**REQUIRED SUB-SKILL:** use `superpowers:brainstorming` to classify the work
-(spike / bounded / architectural), refine intent and requirements, and agree on a
-design before any implementation. Architectural work gets a written spec; bounded
-work gets a short in-chat design.
+## 4. Implement and review
 
-**(multi-repo)** As part of the design, map the change's **cross-repo surface**:
-which repos and seams it touches (API field, client + types, UI, config, deploy,
-docs). Use the `cross-repo-completeness` skill if installed; otherwise follow the
-hub's `docs/cross-repo-features.md` seam map and the per-repo MR checklist (the
-skill is the optional automation of that doc). A user-facing backend capability is
-not designed until the API -> client -> UI -> docs chain is in the plan.
+**REQUIRED SUB-SKILL:** invoke `superpowers:test-driven-development` for
+RED-GREEN-REFACTOR. Use each repo's actual test runner.
 
-### 3. Plan
+- When delegation is available and authorized, invoke
+  `superpowers:subagent-driven-development` with its task reviews.
+- When delegation is unavailable or the user requests inline work, invoke
+  `superpowers:executing-plans`. Do not spawn agents against a user restriction.
 
-**REQUIRED SUB-SKILL:** use `superpowers:writing-plans` to break the approved
-design into small, independently testable tasks. In a multi-repo change, make each
-cross-repo slice its own task so none is silently dropped, and give each touched
-repo its own feature branch and MR/PR: link them and land (or track) them together.
+Invoke `superpowers:requesting-code-review` for the review gate. If no independent
+reviewer is available, perform a separate self-review pass and disclose that
+limitation. Invoke `superpowers:receiving-code-review` before acting on findings.
+Verify each finding, fix material issues, and run the relevant tests again.
 
-### 4. Implement (TDD, subagent-driven)
+## 5. Verify and finish
 
-**REQUIRED SUB-SKILL:** use `superpowers:subagent-driven-development` with
-`superpowers:test-driven-development` (RED-GREEN-REFACTOR) per task, and a review
-per task. Each repo uses its own test runner (for example pytest for a Python
-backend, vitest for a TS frontend). Re-sync codegraph after edits that add or move
-symbols.
+Invoke `cross-repo-completeness` again in audit mode for multi-repo work. Trace the
+actual producer-to-consumer path, including config, deployment, tests, and docs in
+each affected repo. Tests passing in one repo do not establish the whole surface.
+Report present, missing, undocumented, deferred, and N/A slices with evidence.
 
-### 5. Finish and verify the whole surface
+**REQUIRED SUB-SKILLS:** invoke `superpowers:verification-before-completion`
+before success claims, then `superpowers:finishing-a-development-branch`.
+Run fresh checks and inspect their exit status. Push or other remote writes require
+user authorization; if absent, leave local commits ready and report that state.
+Do not infer permission to merge from permission to push.
 
-**REQUIRED SUB-SKILL:** use `superpowers:finishing-a-development-branch` to verify
-tests, push, and open the MR/PR.
+Update each repo's AGENTS.md when a change introduces a convention, interface, or
+build/test command future work needs. A CLAUDE.md shim can import that canonical
+file instead of maintaining two copies.
 
-**(multi-repo)** Before declaring done, audit the whole surface: run the
-`cross-repo-completeness` skill in audit mode if installed, otherwise re-walk the
-hub's `docs/cross-repo-features.md` seam map per repo. Complete each repo's
-MR-template cross-repo checklist: confirm every slice landed and is documented, or
-is explicitly deferred and tracked. **Do not skip this even when all tests pass:**
-backend-green-but-UI-missing is the exact failure this phase exists to catch. A
-change is done only when its whole surface is.
+## Installation and evaluation
 
-## Quick reference
+For modern Claude Code and Codex, prefer the native plugin installer in
+[agentic-dev-setup](https://github.com/doyled-it/agentic-dev-setup). Its global
+instructions route tasks to `development-loop`, `using-codegraph`, and
+`cross-repo-completeness`. Check the installed instruction block after upgrades;
+auto-selection alone is not a reliable activation contract.
 
-| Phase | Skill | Always / when |
-| --- | --- | --- |
-| Understand | codegraph (skill if installed, else the CLI/MCP tool) | always |
-| Brainstorm/design | `superpowers:brainstorming` | always |
-| Map cross-repo surface | `cross-repo-completeness` | multi-repo |
-| Plan | `superpowers:writing-plans` | always (non-trivial) |
-| Implement | `superpowers:subagent-driven-development` + `test-driven-development` | always |
-| Finish | `superpowers:finishing-a-development-branch` | always |
-| Audit the surface | `cross-repo-completeness` (audit) + MR checklist | multi-repo |
+The bundled `scripts/install.sh` is a legacy fallback: it updates only the managed
+global conventions block by default. `--shared-skills` explicitly enables shared
+links for runtimes without native plugins. Do not combine shared links and native
+copies of these skills. See the root README for migration and compatibility.
 
-## Making this always-on
-
-Do not rely on this skill being auto-selected (skill auto-activation is
-unreliable, more so for smaller models). The durable trigger is your global agent
-instructions. Run `scripts/install.sh` once: it ensures the superpowers skills are
-installed and current (from obra's upstream marketplace), registers this repo's
-plugins for Claude Code and symlinks its skills into `~/.agents/skills` for the
-other tools, and writes a managed "development conventions" block into your global
-instructions (for example `~/.claude/CLAUDE.md`) that tells the agent to always use
-codegraph for understanding and to run this loop for features and bugfixes. The
-block is tool-agnostic so you can paste it into Codex or opencode global config too.
-
-`references/evals.md` holds baseline-vs-with-skill scenarios for testing changes to
-this loop.
+`references/evals.md` specifies observable pass/fail criteria. Deterministic repo
+checks do not replace fresh-agent evaluation of invocation and task behavior.

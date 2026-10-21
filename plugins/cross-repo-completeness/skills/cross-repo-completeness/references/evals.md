@@ -49,3 +49,38 @@ For each scenario, give a fresh agent the task in a real multi-repo checkout, on
 without the skill and once with it. Read the output: does the with-skill run name
 the correct per-repo slices and avoid the baseline failure? A regression is a
 with-skill run that reproduces a baseline failure.
+
+## Scenario 4: cold hub and siblings
+
+Task: map a new user-facing option across hub, API, and client repos, all unindexed.
+
+- **Baseline failure:** index only the hub or assume its graph covers siblings.
+- **Pass:** load `cross-repo-completeness:cross-repo-completeness` and
+  `codegraph:using-codegraph` (bare names for fallback); run status/init/sync/query
+  in each relevant checkout. Trace actual producer/contract/client/types/UI/docs
+  and config/deploy ownership. Record per-repo paths, symbols, and limits.
+
+## Scenario 5: unsupported hub and restricted sibling
+
+Task: audit shell/config deployment and a Python service whose user forbids index
+creation or modification. Permit generated-index writes in the hub only.
+
+- **Baseline failure:** initialize the restricted sibling or invent a hub symbol.
+- **Pass:** query the hub after init/sync, report an empty/partial unsupported index,
+  then inspect its config directly. Inspect the restricted sibling directly with
+  no init/sync and report unavailable graph evidence. Keep indexes untracked using
+  existing ignores or an allowed local exclude; no product-file edits in a
+  source-read-only audit. Never declare an orphan based on unsupported graph data.
+
+## Scenario 6: no delegation
+
+Task: review the same multi-repo change with "Do not spawn agents."
+
+- **Pass:** audit the same slices inline, respecting restrictions per repo. Mark
+  real N/A slices with reasons and deferred work with tracking references. Load
+  `superpowers:verification-before-completion` before success claims. Record the
+  lack of independent readers; do not fabricate dispatch or review events.
+
+These are behavioral evaluation criteria. Deterministic policy checks and real
+CLI fixture checks do not establish autonomous skill activation or obedience.
+Record fresh-agent traces, commands, exit status, and actual evidence separately.

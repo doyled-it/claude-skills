@@ -1,7 +1,7 @@
 {
   "name": "development-loop",
   "description": "A disciplined development loop for any feature or bugfix, single-repo or multi-repo: ground understanding in codegraph, compose the superpowers phases (brainstorm, plan, TDD, finish), and verify the full cross-repo surface. Start with the development-loop skill.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": { "name": "doyled-it" },
   "license": "AGPL-3.0-only",
   "keywords": ["development", "workflow", "loop", "feature", "bugfix", "tdd", "superpowers", "codegraph", "cross-repo", "multi-repo", "orchestrator", "understanding", "definition-of-done"]
