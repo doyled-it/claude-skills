@@ -19,10 +19,29 @@ in is updated.** It is done when every slice of its surface has landed and is
 documented. One repo's view, and a single-repo tool like `codegraph`, cannot see
 across the HTTP/API boundary; you have to look in each repo.
 
-This skill fans a reader into each repo and checks the whole chain. Its per-repo
-engine is codegraph: **PAIR WITH the codegraph skill** (`using-codegraph`) for
-navigation inside each repo; this skill composes those per-repo views across the
-boundary codegraph cannot follow.
+Invoke `cross-repo-completeness` explicitly at design and finish for multi-repo
+work (native name `cross-repo-completeness:cross-repo-completeness`). Use
+`development-loop` for the implementation workflow and Superpowers stages.
+**REQUIRED SUB-SKILL:** invoke `using-codegraph` (native name
+`codegraph:using-codegraph`) for navigation in every relevant repo. This skill
+connects those per-repo views across boundaries the graph cannot follow.
+
+## Prepare each repository
+
+From each checkout, run `codegraph status .`, `codegraph init .` if missing, then
+`codegraph sync .` before querying. Close missing-index gaps by default, including
+the hub, siblings, and worktrees that this change requires. Confirm the indexed
+project path; the hub's index does not cover its siblings. Repeat after edits and
+before dispatching readers. An explicit user no-index restriction overrides the
+default; inspect source directly and record that graph evidence is unavailable.
+
+An index may be empty or partial for unsupported file types. After the query,
+use direct inspection of unsupported source and report the coverage limit. Never
+invent graph results or treat a missing graph edge as proof of an orphaned core.
+Generated-index writes need an explicit allowance in a source-read-only task;
+a prohibition on all writes also prohibits init and sync. Keep `.codegraph/`
+untracked through existing ignores or an allowed local exclude, without editing
+product files during source-read-only tasks.
 
 ## When to use
 
@@ -41,13 +60,13 @@ do not assume it).
 
 Run once per project to produce the shared artifacts this audit reads later:
 
-1. Fan a reader into each repo (use codegraph to orient). Each returns: the repo's
+1. Prepare each repo as above, then assign a reader (or read inline). Each returns: the repo's
    responsibility, its public seam (the HTTP routes it exposes or consumes, the
    client module and types on the consuming side, config/env it owns), and its docs.
 2. Scaffold the shared files with the bundled script, so the boilerplate is
    identical every time instead of improvised (deterministic work belongs in a
    script, not the model):
-   `python scripts/scaffold.py --hub <hub-repo> --repo <repo> [--repo <repo> ...] --forge <gitlab|github> --remote-base <clone-base>`
+   `uv run scripts/scaffold.py --hub <hub-repo> --repo <repo> [--repo <repo> ...] --forge <gitlab|github> --remote-base <clone-base>`
    It writes a `cross-repo-features.md` skeleton in the hub plus a request-template
    checklist, a `CONTRIBUTING.md`, and a README pointer in each repo.
 3. Fill in the skeleton's TODOs (the judgment part): the real repo map, the seams,
@@ -67,7 +86,7 @@ Given a named feature, confirm its full surface:
    step, a dead sub-package. Run `codegraph callers` on its entrypoint and trace a
    real path to output. If the capability itself is unfinished, that is the first
    gap; do not mark the backend slice present just because the code exists.
-3. Fan one reader per repo (each using codegraph). Ask each, for THIS feature:
+3. Assign one reader per repo (or read inline), each invoking `using-codegraph`. Ask each, for THIS feature:
    what is wired here, what is missing, what is undocumented. Name files and symbols.
 4. Walk the primary seam end to end and report each slice as present / missing /
    undocumented. For a backend capability that should reach a UI, the chain is:
@@ -82,9 +101,11 @@ Given a named feature, confirm its full surface:
    needs no deploy/config change), not invented; a deferred slice is fine only if it
    is stated and tracked, never silently missing.
 
-Fan-out is a parallel-agents job (one agent per repo, running concurrently); use
-your harness's parallel-agent or workflow mechanism, and have each agent run
-codegraph in its repo before reading files.
+When independent readers are available and authorized, invoke
+`superpowers:dispatching-parallel-agents` for one reader per repo. When delegation
+is unavailable or prohibited, perform the same audit inline. Tell each reader the
+checkout, current index status, coverage limits, and explicit user restrictions.
+Use `superpowers:verification-before-completion` before claiming the audit passed.
 
 ## The seam checklist (adapt to the project)
 
@@ -103,7 +124,8 @@ codegraph in its repo before reading files.
 
 - **Treating an orphaned core as a done backend.** An "implemented" sub-package
   with no non-test caller and no output path cannot ship. Confirm the capability is
-  end-to-end functional (`codegraph callers` on its entrypoint) before auditing its
+  end-to-end functional (`codegraph callers` on its indexed entrypoint, followed by
+  direct source and runtime checks) before auditing its
   outward seams; otherwise you mark the backend present when it is the first gap.
 - **Trusting a single-repo tool across the boundary.** codegraph cannot follow a
   call through an HTTP API into another repo; "no callers" in one repo is not
@@ -133,11 +155,10 @@ declaring it done.
 
 - `scripts/scaffold.py` writes the setup-mode boilerplate deterministically (see
   setup mode). `references/evals.md` holds baseline-vs-with-skill test scenarios.
-- This skill is the Agent Skills open standard, so the same `SKILL.md` runs in
-  Claude Code, Codex, and opencode; only the install path differs. The repo's
-  `scripts/install-skills.sh` symlinks it into each tool's path
-  (`~/.agents/skills`, `~/.claude/skills`); Claude Code can also load the repo as a
-  plugin marketplace.
+- For modern Claude Code and Codex, prefer native plugins through
+  [agentic-dev-setup](https://github.com/doyled-it/agentic-dev-setup). The repo's
+  `scripts/install-skills.sh` is a shared-skills fallback for runtimes without
+  native plugin support. Do not install the same skills both ways.
 - The audit steps are deliberately explicit and low-freedom: follow them in order
   rather than improvising, which also keeps the skill reliable when a smaller or
   open-weight model is driving the agent. Do not rely on this skill being
