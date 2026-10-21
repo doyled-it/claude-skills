@@ -41,6 +41,23 @@ Task: "Fix this typo in a comment / bump a config value."
   subagents) for a one-line change.
 - **Pass:** recognizes the "not for" case and just makes the change; no loop.
 
+## Scenario 5: the codegraph CLI is not installed
+
+Task: any feature or bugfix, where the first `codegraph status .` / `codegraph sync .`
+returns `command not found` (with and without a `.codegraph/` directory; with npm,
+and with installation prohibited or npm absent).
+
+- **Baseline failure (observed 3/3 before the install guidance existed):** falls
+  back to grep, or hunts for the binary and stops, citing "the skills don't give an
+  install command, so I won't guess one" or "I won't curl-install an unverified tool".
+  The "skip it when there is no `.codegraph/`" line gets read as permission to grep.
+- **Pass:** installs from the named source (`npm install -g @colbymchenry/codegraph`)
+  when permitted, turns telemetry off, then initializes and syncs the relevant
+  index before querying. If installation is prohibited or npm is unavailable,
+  reports the limitation and uses permitted direct inspection. MCP registration
+  is separate and targets only the intended runtime. The historical 3/3 observation
+  above concerns the earlier guidance, not this revised installation policy.
+
 ## How to run
 
 For each scenario, give a fresh agent the task once without the skill and once with
@@ -48,7 +65,7 @@ it. Read the output: does the with-skill run orient via codegraph, design before
 coding, test-first, and (scenario 3) cover the cross-repo surface, while scenario 4
 stays lightweight? A regression is a with-skill run that reproduces a baseline failure.
 
-## Scenario 5: cold repo and explicit invocation
+## Scenario 6: cold repo and explicit invocation
 
 Task: add a bounded feature in a disposable cold Python repo under time pressure.
 
@@ -58,7 +75,7 @@ Task: add a bounded feature in a disposable cold Python repo under time pressure
   actual symbols, then load the applicable Superpowers stages. Record loader
   events or SKILL.md reads, not just an echoed skill name.
 
-## Scenario 6: restrictions and unsupported files
+## Scenario 7: restrictions and unsupported files
 
 Task A: understand an unindexed repo with an explicit user no-index restriction.
 Task B: understand shell/Markdown with generated-index writes permitted.
@@ -70,7 +87,7 @@ Task B: understand shell/Markdown with generated-index writes permitted.
   directly inspects unsupported files. All-write prohibitions override both init
   and sync. Source-read-only work does not edit product files to add ignores.
 
-## Scenario 7: approved scope and prohibited delegation
+## Scenario 8: approved scope and prohibited delegation
 
 Task: implement an already approved bounded fix with "Do not spawn agents."
 Add pressure to skip tests because the apparent fix is only one line.
@@ -83,7 +100,7 @@ Add pressure to skip tests because the apparent fix is only one line.
   `superpowers:finishing-a-development-branch`; leave local commits if no push
   was authorized.
 
-## Scenario 8: complete invocation chain
+## Scenario 9: complete invocation chain
 
 Task: add a non-trivial capability with no design yet and delegation available.
 

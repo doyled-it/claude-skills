@@ -125,7 +125,13 @@ stay in place. Old absolute `~/.claude/skills` links owned by this checkout are
 removed when fallback installation runs; directories and foreign links are kept.
 
 The development-loop legacy entry point updates only its managed conventions block
-by default. It no longer installs native plugins or shared links automatically:
+by default. It no longer installs native plugins, shared links, or the CodeGraph
+CLI automatically, and it does not upgrade CodeGraph or register every detected
+agent. Use the native setup for CLI installation and targeted registration.
+For a shared-only runtime, install `@colbymchenry/codegraph` with npm and follow
+`using-codegraph` for telemetry and registration. The former wrapper's
+`--skip-codegraph` and `--keep-codegraph-telemetry` flags are retired; the native
+setup has its own `--skip-codegraph` option and disables telemetry by default.
 
 ```bash
 bash plugins/development-loop/skills/development-loop/scripts/install.sh
