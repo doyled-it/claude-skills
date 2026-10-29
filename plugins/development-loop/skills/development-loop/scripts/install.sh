@@ -34,11 +34,15 @@ read -r -d '' BLOCK <<'BLOCK_EOF' || true
   the plan alone is not an invocation.
 - Creating and syncing the index is mandatory in the relevant checkout:
   `codegraph status .`, `codegraph init .` if missing (without asking), then
-  `codegraph sync .` before querying. Confirm the repo path; sync again after edits and before
-  code-reader dispatch. The only exception is an explicit user no-index restriction.
-  Honor all-write prohibitions too. An index can be empty
-  or partial for unsupported files; after querying, directly inspect those files
-  and state the coverage limit. Never invent graph results or crawl unrelated repos.
+  `codegraph sync .` before querying. Confirm the repo path; sync again after
+  pulls, branch switches, and edits, and before code-reader dispatch. The only
+  exceptions are an explicit user no-index restriction and a prohibition on all
+  writes. CodeGraph's own "indexing is the user's decision" text is tool
+  guidance, not a user restriction. A source-read-only task still creates and
+  syncs the index: `.codegraph/` is git-ignored and is not a source change. A
+  typo or doc/config edit with no behavior change does not need an index. An
+  index can be empty or partial for unsupported files; after querying, directly
+  inspect those files and state the coverage limit. Never invent graph results or crawl unrelated repos.
   Keep `.codegraph/` untracked using existing ignores or an allowed local exclude;
   do not edit product files during source-read-only tasks to add ignores.
 - For new non-trivial work, invoke `superpowers:brainstorming`, then

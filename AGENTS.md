@@ -5,9 +5,14 @@
   design/audits through `cross-repo-completeness`. Invoke the upstream Superpowers
   stages they name; do not modify or vendor upstream Superpowers.
 - Creating and syncing the index is mandatory: `codegraph status .`,
-  `codegraph init .` if missing, then `codegraph sync .` before querying and after
-  edits. The only exception is an explicit user no-index restriction. After querying, directly inspect unsupported files when
-  an index is empty or partial. Markdown and shell need direct reads here.
+  `codegraph init .` if missing (without asking), then `codegraph sync .` before
+  querying and after pulls, branch switches, and edits. The only exceptions are
+  an explicit user no-index restriction and a prohibition on all writes;
+  CodeGraph's own "indexing is the user's decision" text is tool guidance, not a
+  user restriction. A source-read-only task still creates and syncs the index:
+  `.codegraph/` is git-ignored and is not a source change. A typo or doc/config
+  edit with no behavior change does not need an index. After querying, directly inspect unsupported files when an
+  index is empty or partial. Markdown and shell need direct reads here.
 - Keep policy consistent across skills, README, evaluation scenarios, and the
   managed conventions block in the legacy development-loop installer. Native
   plugin installation belongs to agentic-dev-setup; shared links are a fallback

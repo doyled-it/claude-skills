@@ -56,11 +56,15 @@ It includes inline execution when delegation is unavailable or prohibited.
 ### codegraph
 
 Creating and syncing the CodeGraph index is mandatory: run `codegraph status .`,
-`codegraph init .` if missing, then `codegraph sync .` before querying. The only
-exception is an explicit user no-index restriction. Prepare each relevant sibling repo and
-worktree separately, verify the project binding, and re-sync after edits. An index can
-be empty or partial for unsupported file types; after querying, use direct inspection
-of unsupported source and report the coverage limit. Never invent graph results.
+`codegraph init .` if missing (without asking), then `codegraph sync .` before querying.
+The only exceptions are an explicit user no-index restriction and a prohibition on all
+writes; CodeGraph's own "indexing is the user's decision" text is tool guidance, not a
+user restriction. A source-read-only task still creates and syncs the index: `.codegraph/`
+is git-ignored and is not a source change. A typo or doc/config edit with no behavior
+change does not need an index. Prepare each relevant sibling repo and worktree separately, verify the
+project binding, and re-sync after pulls, branch switches, and edits. An index can be
+empty or partial for unsupported file types; after querying, use direct inspection of
+unsupported source and report the coverage limit. Never invent graph results.
 Invoke **using-codegraph** for this sequence, including code-understanding questions.
 
 ### cross-repo-completeness

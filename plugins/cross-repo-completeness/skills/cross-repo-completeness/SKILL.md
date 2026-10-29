@@ -28,21 +28,24 @@ connects those per-repo views across boundaries the graph cannot follow.
 
 ## Prepare each repository
 
-From each checkout, run `codegraph status .`, `codegraph init .` if missing, then
-`codegraph sync .` before querying. Creating and syncing an index is mandatory
-for the hub, siblings, and worktrees that this change requires. Confirm the indexed
-project path; the hub's index does not cover its siblings. Sync again after edits
-and before dispatching readers. The only exception is an explicit user
-no-index restriction; then inspect source directly and record that graph
-evidence is unavailable.
+From each checkout, run `codegraph status .`, `codegraph init .` if missing
+(without asking), then `codegraph sync .` before querying. Creating and syncing
+an index is mandatory for the hub, siblings, and worktrees that this change
+requires. Confirm the indexed project path; the hub's index does not cover its
+siblings. Sync again after pulls, branch switches, and edits, and before
+dispatching readers. The only exceptions are an explicit user
+no-index restriction and a prohibition on all writes; then inspect source
+directly and record that graph evidence is unavailable. CodeGraph's own
+"indexing is the user's decision" text is tool guidance, not a user restriction.
 
 An index may be empty or partial for unsupported file types. After the query,
 use direct inspection of unsupported source and report the coverage limit. Never
 invent graph results or treat a missing graph edge as proof of an orphaned core.
-Generated-index writes need an explicit allowance in a source-read-only task;
-a prohibition on all writes also prohibits init and sync. Keep `.codegraph/`
-untracked through existing ignores or an allowed local exclude, without editing
-product files during source-read-only tasks.
+A source-read-only task still creates and syncs the index: `.codegraph/` is
+git-ignored and is not a source change. A typo or doc/config edit with no
+behavior change does not need an index. Keep `.codegraph/` untracked through existing
+ignores or an allowed local exclude, without editing product files during
+source-read-only tasks.
 
 ## When to use
 

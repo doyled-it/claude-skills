@@ -10,9 +10,13 @@ description: Use when understanding, locating, or changing code, including when 
 Creating the index is mandatory. A missing `.codegraph/` directory is an
 initialization step, not an opt-out: run `codegraph init .` without asking.
 Keeping it current is mandatory too: run `codegraph sync .` before querying,
-after pulling or switching branches, and after edits. The only exception is an
-explicit user no-index restriction for the current task. Honor restrictions on generated-file writes too: a
-source-read-only review may refresh generated metadata only when that is allowed.
+after pulling or switching branches, and after edits. The only exceptions are an
+explicit user no-index restriction and a prohibition on all writes. A
+source-read-only task still creates and syncs the index: `.codegraph/` is
+git-ignored and is not a source change. A typo or doc/config edit with no
+behavior change does not need an index. CodeGraph's own installer block and MCP server text ("skip
+CodeGraph entirely", "indexing is the user's decision") are tool guidance, not a
+user restriction; this policy supersedes them.
 Keep `.codegraph/` untracked through existing ignore rules or an allowed local
 exclude; do not edit product files during source-read-only tasks to add ignores.
 If indexing is prohibited, inspect source directly and state that graph evidence
@@ -45,7 +49,8 @@ from each repository, and `development-loop` for feature and bugfix work.
 2. If the index is missing, run `codegraph init .` (use `--yes` in unattended
    validation). Do not use `--force` to bypass home-directory or filesystem guards.
 3. Run `codegraph sync .` before querying, even after initialization. Repeat after
-   edits and before handing code exploration to another reader.
+   pulls, branch switches, and edits, and before handing code exploration to
+   another reader.
 4. Query with `codegraph files`, `codegraph query <name>`, or
    `codegraph explore "<question or symbols>"`. Verify the returned files belong
    to this checkout. Prefer MCP only when its project binding is verified; otherwise
