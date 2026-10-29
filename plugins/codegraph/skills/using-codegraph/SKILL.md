@@ -5,11 +5,13 @@ description: Use when understanding, locating, or changing code, including when 
 
 # Using CodeGraph
 
-## Default policy
+## Index policy
 
-Close index gaps during code understanding. A missing `.codegraph/` directory is
-an initialization step, not an opt-out. An explicit user no-index restriction
-overrides this default. Honor restrictions on generated-file writes too: a
+Creating the index is mandatory. A missing `.codegraph/` directory is an
+initialization step, not an opt-out: run `codegraph init .` without asking.
+Keeping it current is mandatory too: run `codegraph sync .` before querying,
+after pulling or switching branches, and after edits. The only exception is an
+explicit user no-index restriction for the current task. Honor restrictions on generated-file writes too: a
 source-read-only review may refresh generated metadata only when that is allowed.
 Keep `.codegraph/` untracked through existing ignore rules or an allowed local
 exclude; do not edit product files during source-read-only tasks to add ignores.
@@ -75,8 +77,8 @@ runtime entrypoints, external consumers, and tests.
 - Before dispatch, tell the reader the checkout path, index status, known coverage
   limits, and any explicit user restrictions. When delegation is unavailable or
   prohibited, perform those reads inline.
-- Code understanding authorizes indexing the relevant checkout by default; it
-  does not authorize crawling unrelated workspaces. Setup installers should not
+- Indexing the relevant checkout is mandatory for code understanding; it does
+  not authorize crawling unrelated workspaces. Setup installers should not
   recursively initialize every repo on the machine.
 
 ## Validation

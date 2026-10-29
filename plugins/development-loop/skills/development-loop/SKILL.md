@@ -26,12 +26,13 @@ the approved stage instead of asking for the same approval again.
 ## 1. Understand
 
 **REQUIRED SUB-SKILL:** invoke `using-codegraph` (native name
-`codegraph:using-codegraph`) before locating or changing code. Close index gaps:
-`codegraph status .`, `codegraph init .` when missing, then `codegraph sync .`
-before querying. Confirm the project path matches the current checkout. Repeat
-after edits and before handing exploration to another reader.
+`codegraph:using-codegraph`) before locating or changing code. Creating and
+syncing the index is mandatory: `codegraph status .`, `codegraph init .` when
+missing (without asking), then `codegraph sync .` before querying. Confirm the
+project path matches the current checkout. Sync again after pulls, branch
+switches, and edits, and before handing exploration to another reader.
 
-An explicit user no-index restriction overrides the default. If index writes
+The only exception is an explicit user no-index restriction. If index writes
 are prohibited, inspect source directly and report the unavailable graph evidence.
 An index may be empty or partial for unsupported file types. After querying,
 use direct inspection for unsupported source and state the limitation; do not

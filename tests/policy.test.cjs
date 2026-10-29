@@ -31,6 +31,17 @@ for (const file of [...skillPaths, 'README.md']) {
   });
 }
 
+for (const [file, text] of [
+  ...[...skillPaths, 'README.md', 'AGENTS.md'].map((f) => [f, read(f)]),
+  ['install.sh managed block', block],
+]) {
+  test(`${file}: creating and syncing the index is mandatory, not a default`, () => {
+    assert.match(text, /mandatory/iu);
+    assert.match(text, /sync[\s\S]{0,160}mandatory|mandatory[\s\S]{0,160}sync/iu);
+    assert.doesNotMatch(text, /overrides? (?:this|the) default|gaps by default|Default policy/iu);
+  });
+}
+
 test('cold-repo skill is discoverable before an index exists', () => {
   const description = read(skillPaths[0]).split('\n').find((line) => line.startsWith('description:'));
   assert.match(description, /missing|absent|unindexed/u);
@@ -62,7 +73,7 @@ test('development loop explicitly routes bug diagnosis, reviews and inline execu
 
 test('changed plugins invalidate known installed caches', () => {
   for (const [name, version] of [
-    ['codegraph', '1.2.0'], ['development-loop', '1.2.0'], ['cross-repo-completeness', '1.1.0'],
+    ['codegraph', '1.2.1'], ['development-loop', '1.2.1'], ['cross-repo-completeness', '1.1.1'],
   ]) assert.equal(JSON.parse(read(`plugins/${name}/.claude-plugin/plugin.json`)).version, version);
 });
 

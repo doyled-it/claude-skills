@@ -29,11 +29,12 @@ connects those per-repo views across boundaries the graph cannot follow.
 ## Prepare each repository
 
 From each checkout, run `codegraph status .`, `codegraph init .` if missing, then
-`codegraph sync .` before querying. Close missing-index gaps by default, including
-the hub, siblings, and worktrees that this change requires. Confirm the indexed
-project path; the hub's index does not cover its siblings. Repeat after edits and
-before dispatching readers. An explicit user no-index restriction overrides the
-default; inspect source directly and record that graph evidence is unavailable.
+`codegraph sync .` before querying. Creating and syncing an index is mandatory
+for the hub, siblings, and worktrees that this change requires. Confirm the indexed
+project path; the hub's index does not cover its siblings. Sync again after edits
+and before dispatching readers. The only exception is an explicit user
+no-index restriction; then inspect source directly and record that graph
+evidence is unavailable.
 
 An index may be empty or partial for unsupported file types. After the query,
 use direct inspection of unsupported source and report the coverage limit. Never

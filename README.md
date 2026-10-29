@@ -55,9 +55,9 @@ It includes inline execution when delegation is unavailable or prohibited.
 
 ### codegraph
 
-Close CodeGraph index gaps during code understanding: run `codegraph status .`,
-`codegraph init .` if missing, then `codegraph sync .` before querying. An explicit user
-no-index restriction overrides this default. Prepare each relevant sibling repo and
+Creating and syncing the CodeGraph index is mandatory: run `codegraph status .`,
+`codegraph init .` if missing, then `codegraph sync .` before querying. The only
+exception is an explicit user no-index restriction. Prepare each relevant sibling repo and
 worktree separately, verify the project binding, and re-sync after edits. An index can
 be empty or partial for unsupported file types; after querying, use direct inspection
 of unsupported source and report the coverage limit. Never invent graph results.

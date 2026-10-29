@@ -4,9 +4,9 @@
   `development-loop`, code understanding through `using-codegraph`, and multi-repo
   design/audits through `cross-repo-completeness`. Invoke the upstream Superpowers
   stages they name; do not modify or vendor upstream Superpowers.
-- Close index gaps by default: `codegraph status .`, `codegraph init .` if missing,
-  then `codegraph sync .` before querying. Explicit user no-index restrictions
-  override this default. After querying, directly inspect unsupported files when
+- Creating and syncing the index is mandatory: `codegraph status .`,
+  `codegraph init .` if missing, then `codegraph sync .` before querying and after
+  edits. The only exception is an explicit user no-index restriction. After querying, directly inspect unsupported files when
   an index is empty or partial. Markdown and shell need direct reads here.
 - Keep policy consistent across skills, README, evaluation scenarios, and the
   managed conventions block in the legacy development-loop installer. Native
