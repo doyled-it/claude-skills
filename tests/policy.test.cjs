@@ -31,6 +31,28 @@ for (const file of [...skillPaths, 'README.md']) {
   });
 }
 
+for (const [file, load] of [
+  ...[...skillPaths, 'README.md', 'AGENTS.md'].map((f) => [f, () => read(f)]),
+  ['install.sh managed block', () => block],
+]) {
+  test(`${file}: creating and syncing the index is mandatory, not a default`, () => {
+    const text = load();
+    assert.match(text, /\bsync(?:ing)?\b[^.]{0,40}\bmandatory\b|\bmandatory\b[^.]{0,40}\bsync\b/iu);
+    assert.match(text, /without\s+asking/iu);
+    assert.match(text, /after\s+(?:pulls|pulling)[^.]{0,40}(?:branch\s+switches|switching\s+branches)/iu);
+    assert.match(text, /prohibition\s+on\s+all\s+writes/iu);
+    assert.match(text, /user's\s+decision[^.]{0,20}(?:text\s+)?(?:is|are)\s+tool\s+guidance/iu);
+    assert.doesNotMatch(text,
+      /overrides? (?:this|the) default|(?:gaps|indexing)[^.]{0,60}by default|Default policy|for the current task/iu);
+  });
+  test(`${file}: source-read-only work still indexes; no-behavior edits need no index`, () => {
+    const text = load();
+    assert.match(text, /source-read-only\s+task\s+still\s+creates\s+and\s+syncs\s+the\s+index/iu);
+    assert.doesNotMatch(text, /source-read-only[^.]{0,80}counts\s+as\s+a\s+no-index\s+restriction/iu);
+    assert.match(text, /no\s+behavior\s+change\s+does\s+not\s+need\s+an\s+index/iu);
+  });
+}
+
 test('cold-repo skill is discoverable before an index exists', () => {
   const description = read(skillPaths[0]).split('\n').find((line) => line.startsWith('description:'));
   assert.match(description, /missing|absent|unindexed/u);
@@ -62,7 +84,7 @@ test('development loop explicitly routes bug diagnosis, reviews and inline execu
 
 test('changed plugins invalidate known installed caches', () => {
   for (const [name, version] of [
-    ['codegraph', '1.2.0'], ['development-loop', '1.2.0'], ['cross-repo-completeness', '1.1.0'],
+    ['codegraph', '1.2.1'], ['development-loop', '1.2.1'], ['cross-repo-completeness', '1.1.1'],
   ]) assert.equal(JSON.parse(read(`plugins/${name}/.claude-plugin/plugin.json`)).version, version);
 });
 

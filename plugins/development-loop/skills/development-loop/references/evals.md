@@ -39,7 +39,8 @@ Task: "Fix this typo in a comment / bump a config value."
 
 - **Baseline failure (over-process):** spins up the full loop (brainstorm, plan,
   subagents) for a one-line change.
-- **Pass:** recognizes the "not for" case and just makes the change; no loop.
+- **Pass:** recognizes the "not for" case and just makes the change; no loop, and
+  no index build in an unindexed repo.
 
 ## Scenario 5: the codegraph CLI is not installed
 
