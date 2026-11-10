@@ -1,6 +1,6 @@
 ---
 name: writing-nonfiction
-description: Use when writing any nonfiction piece from scratch, or a web page whose job is to explain, argue, or tell a true story (explainer, essay, data story, article, topic page, report, archive). The entry point for nonfiction writing; start here. Not for a one-line answer, code (use superpowers), or a trivial edit.
+description: Use when writing any nonfiction piece from scratch, or a web page whose job is to explain, argue, or tell a true story (explainer, essay, data story, article, topic page, report, archive). The entry point for nonfiction writing; start here. Not for a one-line answer, code (use superpowers), software documentation (use writing-software-docs), or a trivial edit.
 ---
 
 # Writing Nonfiction
@@ -18,6 +18,8 @@ letter of this is violating the spirit of it.
 
 - Writing any nonfiction piece from scratch: explainer, essay, data story, article, archive,
   report, or an interactive web page that explains or argues.
+- Software documentation (a docs site page, README, user or admin guide, reference, how-to,
+  troubleshooting): use `writing-software-docs` instead of this workflow.
 - Not for: a one-line answer, code (use superpowers), or a trivial edit to existing text.
 
 ## The workflow
