@@ -7,7 +7,7 @@ set -euo pipefail
 
 read -r -d '' CTX <<'EOF' || true
 <nonfiction-superpowers>
-For any nonfiction writing task (an explainer, essay, data story, article, archive, or a web page that explains, argues, or tells a true story), START with the writing-nonfiction skill via the Skill tool. It orchestrates the workflow: brainstorm, design, research, draft, review, edit. This does not apply to code (use superpowers) or to one-line answers.
+For any nonfiction writing task (an explainer, essay, data story, article, archive, or a web page that explains, argues, or tells a true story), START with the writing-nonfiction skill via the Skill tool. It orchestrates the workflow: brainstorm, design, research, draft, review, edit. For software documentation (docs site pages, READMEs, guides, reference, how-tos, troubleshooting), use the writing-software-docs skill instead. This does not apply to code (use superpowers) or to one-line answers.
 </nonfiction-superpowers>
 EOF
 
