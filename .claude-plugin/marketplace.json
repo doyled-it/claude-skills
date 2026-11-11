@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "nonfiction-superpowers",
-      "description": "A superpowers-style workflow for nonfiction prose: brainstorm, design, research, draft, review, and edit, as a sequence of composable skills (orchestrated by writing-nonfiction). Includes the structure/data rules, the AI-slop blacklist, and Diataxis-based software documentation (writing-software-docs).",
+      "description": "A composable workflow for nonfiction prose, plus Diataxis-based software documentation. Start prose with writing-nonfiction and software docs with writing-software-docs.",
       "author": {
         "name": "doyled-it"
       },

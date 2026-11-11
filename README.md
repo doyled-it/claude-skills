@@ -34,7 +34,8 @@ The skills in the plugin:
   craft, tells).
 - **writing-software-docs**: technical documentation organized by reader need with the
   Diataxis framework (tutorial, how-to, reference, explanation): a placement plan first, one
-  type per page, cross-links instead of repetition, and unconfirmed claims kept off the page.
+  type per page, cross-links instead of repetition, and unconfirmed facts listed
+  with visible markers where a needed step or cell has a gap.
 
 For an interactive data-story site, run `writing-nonfiction` for the research and prose and
 `superpowers` for the implementation under one plan (see the "Combining with code" section in the

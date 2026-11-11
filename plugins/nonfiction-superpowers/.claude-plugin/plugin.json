@@ -1,7 +1,7 @@
 {
   "name": "nonfiction-superpowers",
-  "description": "A superpowers-style workflow for nonfiction prose: brainstorm, design, research, draft, review, and edit, as a sequence of composable skills. Start with the writing-nonfiction skill; for software documentation use writing-software-docs (Diataxis).",
-  "version": "1.1.0",
+  "description": "A composable workflow for nonfiction prose, plus Diataxis-based software documentation. Start prose with writing-nonfiction and software docs with writing-software-docs.",
+  "version": "1.1.1",
   "author": {
     "name": "doyled-it"
   },
