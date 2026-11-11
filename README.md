@@ -76,6 +76,43 @@ checklist, partly scripted) and **audit** (read each repo for a named change, wa
 end-to-end seam, report present/missing/undocumented slices). Pairs with the **codegraph** skill
 as its per-repo engine.
 
+## Fabrication
+
+### printable-parts
+
+Functional checks for 3D-printed parts, layered on
+[text-to-cad](https://github.com/earthtojake/text-to-cad) and composed by skill name,
+never vendored. The text-to-cad DFM check validates walls, overhangs, and supports;
+it deliberately does not check function. That gap shipped real defects: an inverted
+countersink so a screw head could not seat, and a clip slot cut to 22 mm when its
+parameters asked for 27. Both passed a file-format test and a DFM check.
+
+**printable-parts** makes every functional feature a number checked on the exported
+mesh itself. Start with the **printable-parts** skill; it composes text-to-cad's
+`cad` and `print3d` skills in order. Its workflow:
+
+1. A measurable intent list per part, written before modeling and kept beside the model.
+2. Model with the `cad` skill.
+3. Export, then check every intent on the exported STL or 3MF (not just the model
+   code), plus the cad printing DFM check. A failed intent loops back to modeling.
+4. A stale-file guard: the expected dimensions come from the parameters, the measured
+   ones from the mesh, so a parameter changed without a re-export fails in CI.
+5. Snapshots plus a cross-section through every hole, slot, and pocket, for a person
+   with no CAD software.
+6. A test-fit coupon: a small, fast print of just the critical fit.
+7. A print sheet: orientation, filament, Bambu Lab profile, what to measure off the plate.
+8. A reviewer re-runs the checks and opens the cross-sections.
+
+Deterministic work lives in bundled standard-library scripts (`stl_measure.py`,
+`check_part.py`) that run in any repo's CI with `uv run` or `python3`.
+
+The ordering is enforced in three layers: the skill as the soft entry point, a Claude
+Code PreToolUse hook (`guard-printable-mesh.js`) that gates mesh export on an intent
+file and slicing or sending on a passing check record whose hash matches the mesh, and
+the checks in the host repo's CI. The hook is Claude Code only; the hard per-command
+gate is unavailable on Codex, opencode, and other runtimes, which get the soft layer
+and the CI layer. The hook fails open on any error, never wedging an unrelated session.
+
 ## Install with native plugins
 
 For modern Claude Code and Codex, prefer
@@ -94,6 +131,7 @@ For manual Claude Code installation, add both marketplaces and install the plugi
 /plugin install codegraph@doyled-it-skills
 /plugin install cross-repo-completeness@doyled-it-skills
 /plugin install nonfiction-superpowers@doyled-it-skills
+/plugin install printable-parts@doyled-it-skills
 ```
 
 Installing plugins exposes skills. Explicitly load the matching skill; mentioning a

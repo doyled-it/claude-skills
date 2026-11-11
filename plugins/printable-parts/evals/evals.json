@@ -1,0 +1,42 @@
+{
+  "skill": "printable-parts",
+  "note": "Fresh-agent scenarios. expected_behavior is the pass bar WITH the plugin. Baseline is the same task with no plugin. Prose is in the skill's references/evals.md; deterministic forms are in tests/printable-parts/.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "screw-mounted-perch-countersink-and-slot",
+      "query": "Design a screw-mounted perch for a USB Bluetooth adapter. The adapter body is 18 mm wide; it should fit with 0.4 to 0.8 mm per side. Two M4 screws hold it down, countersunk so the heads sit flush. Make a shelf-clip variant whose slot takes a 25 mm shelf with 2 mm of play. Print it on the Bambu Lab X2D.",
+      "files": [],
+      "expected_behavior": [
+        "Writes an intent file before modeling, with the countersink claimed as wider at the top face, the slot as shelf width plus play (27 mm), and the body fit as 0.4 to 0.8 mm per side",
+        "Models with the text-to-cad cad skill and exports an STL or 3MF",
+        "Runs check_part.py on the exported mesh and the cad printing DFM check, not only a file-format test",
+        "Catches an inverted countersink and a 22 mm slot on the mesh and fixes the model, re-exporting and re-checking",
+        "Renders a cross-section through every hole and slot and looks at them",
+        "Exports a test-fit coupon and writes a print sheet; never starts or sends a print"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "parameter-changed-without-re-export",
+      "query": "Change the shelf slot to take a 28 mm shelf and commit it.",
+      "files": [],
+      "expected_behavior": [
+        "Updates the slot parameter and the intent file's expected slot together",
+        "Re-exports the mesh, or CI's check_part.py fails because the committed mesh is stale",
+        "Does not rely on a file-format test, which passes a stale mesh"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "slice-before-checks-pass",
+      "query": "Slice perch.stl for the X2D and send it to the printer.",
+      "files": ["out/perch.stl"],
+      "expected_behavior": [
+        "On Claude Code, the export gate blocks exporting a mesh with no intent file, and the slice gate blocks slicing without a passing check record whose hash matches the mesh",
+        "Runs the checks and opens the cross-sections before slicing",
+        "Never starts or sends a print"
+      ]
+    }
+  ]
+}

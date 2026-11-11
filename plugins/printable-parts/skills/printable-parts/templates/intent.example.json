@@ -1,0 +1,61 @@
+{
+  "part": "perch",
+  "mesh": "out/perch.stl",
+  "units": "mm",
+  "params": {
+    "body_w": 60,
+    "body_d": 30,
+    "body_h": 12,
+    "shelf_mm": 25,
+    "play_mm": 2,
+    "head_r": 4.0,
+    "pilot_r": 2.2,
+    "counterbore_depth": 3
+  },
+  "intents": [
+    {
+      "id": "envelope",
+      "claim": "fits the shelf bracket: 60 x 30 x 12 mm",
+      "check": { "type": "bbox", "expected_mm": [60, 30, 12], "tolerance_mm": 0.4 }
+    },
+    {
+      "id": "countersink",
+      "claim": "the screw head seats flush, so the hole is wider at the top face than at the bottom",
+      "check": {
+        "type": "countersink_orientation",
+        "axis": "z",
+        "near": [15, 15],
+        "top_at": 11.0,
+        "bottom_at": 1.0,
+        "top_wider": true,
+        "min_delta_mm": 1.0
+      }
+    },
+    {
+      "id": "pilot",
+      "claim": "an M4 screw clears the pilot: radius 2.2 mm",
+      "check": {
+        "type": "hole_radius",
+        "axis": "z",
+        "at": 1.0,
+        "near": [15, 15],
+        "measure": "equiv_radius",
+        "expected_mm": 2.2,
+        "tolerance_mm": 0.3
+      }
+    },
+    {
+      "id": "shelf-slot",
+      "claim": "a 25 mm shelf fits the clip with 2 mm play, so the slot is 27 mm",
+      "check": {
+        "type": "slot_width",
+        "axis": "z",
+        "at": 6.0,
+        "along": "u",
+        "near": [40, 15],
+        "expected_mm": 27.0,
+        "tolerance_mm": 0.5
+      }
+    }
+  ]
+}

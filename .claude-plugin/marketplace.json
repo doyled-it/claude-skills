@@ -41,6 +41,15 @@
       },
       "category": "development",
       "source": "./plugins/development-loop"
+    },
+    {
+      "name": "printable-parts",
+      "description": "Functional checks for 3D-printed parts, layered on text-to-cad (composed by name, never vendored): a measurable intent list per part, checked on the exported mesh, a stale-file guard, cross-sections, a test-fit coupon, a print sheet, and a PreToolUse hook that gates mesh export and slicing. Start with the printable-parts skill.",
+      "author": {
+        "name": "doyled-it"
+      },
+      "category": "fabrication",
+      "source": "./plugins/printable-parts"
     }
   ]
 }

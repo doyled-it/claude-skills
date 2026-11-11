@@ -2,3 +2,5 @@ node_modules/
 .DS_Store
 .codegraph/
 .superpowers/
+__pycache__/
+*.pyc
