@@ -88,6 +88,122 @@ test('changed plugins invalidate known installed caches', () => {
   ]) assert.equal(JSON.parse(read(`plugins/${name}/.claude-plugin/plugin.json`)).version, version);
 });
 
+// --- printable-parts plugin ------------------------------------------------
+
+const ppPlugin = () =>
+  JSON.parse(read('plugins/printable-parts/.claude-plugin/plugin.json'));
+const marketplace = () => JSON.parse(read('.claude-plugin/marketplace.json'));
+const ppSkill = () => read('plugins/printable-parts/skills/printable-parts/SKILL.md');
+
+function walkFiles(dir) {
+  const out = [];
+  for (const ent of fs.readdirSync(path.join(root, dir), { withFileTypes: true })) {
+    const rel = path.join(dir, ent.name);
+    if (ent.isDirectory()) out.push(...walkFiles(rel));
+    else out.push(rel);
+  }
+  return out;
+}
+
+test('printable-parts: marketplace entry and plugin metadata are consistent', () => {
+  const entry = marketplace().plugins.find((p) => p.name === 'printable-parts');
+  assert.ok(entry, 'printable-parts missing from marketplace.json');
+  assert.equal(entry.source, './plugins/printable-parts');
+  const plugin = ppPlugin();
+  assert.equal(plugin.name, 'printable-parts');
+  assert.equal(plugin.version, '1.1.0');
+  // Description consistent across the two manifests (AGENTS.md requirement).
+  assert.equal(plugin.description, entry.description);
+  assert.match(plugin.description, /text-to-cad/u);
+  assert.match(plugin.description, /Start with the printable-parts skill\./u);
+});
+
+test('printable-parts: SKILL.md description says what it does and when to use it', () => {
+  const text = ppSkill();
+  const fm = text.split('---')[1] || '';
+  const desc = (fm.match(/description:\s*([\s\S]*?)\nlicense:/u) || [])[1] || '';
+  // Anthropic's guidance (owner's tie-breaker): what it does AND when to use.
+  assert.match(desc, /\bUse when\b/u);
+  assert.match(desc, /text-to-cad/u);
+  // Trigger nouns the soft layer competes for.
+  for (const noun of ['mount', 'bracket', 'clip', 'perch', 'enclosure']) {
+    assert.ok(desc.includes(noun), `description missing trigger noun ${noun}`);
+  }
+  // Third person: no first/second person openers.
+  assert.doesNotMatch(desc, /\b(I can|I will|you can use this)\b/iu);
+});
+
+test('printable-parts: SKILL.md composes text-to-cad by name and stays an overview', () => {
+  const text = ppSkill();
+  assert.match(text, /REQUIRED SUB-SKILL:\*\*\s*`?cad`?/u);
+  assert.match(text, /`?print3d`?/u);
+  assert.match(text, /never\s+(?:vendors?|edits?)\s+it|never vendors or edits it/iu);
+  // Under 500 lines (Anthropic's budget).
+  assert.ok(text.split('\n').length < 500, 'SKILL.md body should stay under 500 lines');
+});
+
+test('printable-parts: the enforcement reference documents the per-runtime limit', () => {
+  const text = read(
+    'plugins/printable-parts/skills/printable-parts/references/enforcement.md'
+  );
+  assert.match(text, /PreToolUse/u);
+  assert.match(text, /fail(?:s)?\s+open/iu);
+  // The hook is Claude Code only; other runtimes get the soft + repo layers.
+  assert.match(text, /Claude Code only|Claude Code\b[^.]*hook/iu);
+  assert.match(text, /Codex/u);
+});
+
+test('printable-parts: SKILL.md carries the prior-art and reference-hardware steps', () => {
+  const text = ppSkill();
+  // The two addendum steps appear in the checklist.
+  assert.match(text, /0\.\s*Prior art searched/u);
+  assert.match(text, /1\.5\s*Reference model/u);
+  // And link one level deep to their own references.
+  assert.match(text, /references\/prior-art\.md/u);
+  assert.match(text, /references\/reference-hardware\.md/u);
+  for (const ref of ['prior-art.md', 'reference-hardware.md']) {
+    const body = read(
+      `plugins/printable-parts/skills/printable-parts/references/${ref}`
+    );
+    assert.ok(body.length > 0, `${ref} should exist and be non-empty`);
+  }
+  // The intent schema documents the two records the gate enforces.
+  const intentRef = read(
+    'plugins/printable-parts/skills/printable-parts/references/intent-list.md'
+  );
+  assert.match(intentRef, /prior_art/u);
+  assert.match(intentRef, /reference_tier/u);
+});
+
+test('printable-parts: hook manifest gates the Bash tool before it runs', () => {
+  const hooks = JSON.parse(
+    read('plugins/printable-parts/hooks/hooks.json')
+  );
+  const pre = hooks.hooks.PreToolUse;
+  assert.ok(Array.isArray(pre) && pre.length >= 1);
+  assert.equal(pre[0].matcher, 'Bash');
+  assert.match(pre[0].hooks[0].command, /guard-printable-mesh\.js/u);
+});
+
+test('printable-parts: README documents the plugin, the install, and the hook limit', () => {
+  const text = read('README.md');
+  assert.match(text, /### printable-parts/u);
+  assert.match(text, /\/plugin install printable-parts@doyled-it-skills/u);
+  assert.match(text, /hook is Claude Code only/iu);
+});
+
+test('printable-parts: no em dashes in the plugin or its tests', () => {
+  const files = [
+    ...walkFiles('plugins/printable-parts'),
+    ...walkFiles('tests/printable-parts'),
+  ];
+  for (const file of files) {
+    if (/\.(md|json|js|py|sh|cjs)$/u.test(file)) {
+      assert.ok(!read(file).includes('—'), `em dash in ${file}`);
+    }
+  }
+});
+
 test('canonical instructions and generated state conventions exist', () => {
   assert.equal(read('CLAUDE.md').trim(), '@AGENTS.md');
   for (const name of ['development-loop', 'using-codegraph', 'cross-repo-completeness']) {
