@@ -91,7 +91,11 @@ parameters asked for 27. Both passed a file-format test and a DFM check.
 mesh itself. Start with the **printable-parts** skill; it composes text-to-cad's
 `cad` and `print3d` skills in order. Its workflow:
 
+0. A prior-art search (MakerWorld, Printables, Thingiverse) before modeling, with the
+   decision (use as is, remix, or design new) recorded with links and licenses.
 1. A measurable intent list per part, written before modeling and kept beside the model.
+   Whenever the part touches a device, a reference model of that device (a five-tier
+   source order) and an assembly fit check come before modeling too.
 2. Model with the `cad` skill.
 3. Export, then check every intent on the exported STL or 3MF (not just the model
    code), plus the cad printing DFM check. A failed intent loops back to modeling.
@@ -108,7 +112,8 @@ Deterministic work lives in bundled standard-library scripts (`stl_measure.py`,
 
 The ordering is enforced in three layers: the skill as the soft entry point, a Claude
 Code PreToolUse hook (`guard-printable-mesh.js`) that gates mesh export on an intent
-file and slicing or sending on a passing check record whose hash matches the mesh, and
+file whose prior-art and reference-hardware records are complete, and slicing or
+sending on a passing check record whose hash matches the mesh, and
 the checks in the host repo's CI. The hook is Claude Code only; the hard per-command
 gate is unavailable on Codex, opencode, and other runtimes, which get the soft layer
 and the CI layer. The hook fails open on any error, never wedging an unrelated session.

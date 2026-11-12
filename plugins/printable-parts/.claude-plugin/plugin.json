@@ -1,7 +1,7 @@
 {
   "name": "printable-parts",
-  "description": "Functional checks for 3D-printed parts, layered on text-to-cad (composed by name, never vendored): a measurable intent list per part, checked on the exported mesh, a stale-file guard, cross-sections, a test-fit coupon, a print sheet, and a PreToolUse hook that gates mesh export and slicing. Start with the printable-parts skill.",
-  "version": "1.0.0",
+  "description": "Functional checks for 3D-printed parts, layered on text-to-cad (composed by name, never vendored): a prior-art search and a reference-model tier per device recorded before modeling, a measurable intent list per part checked on the exported mesh, a stale-file guard, cross-sections, a test-fit coupon, a print sheet, and a PreToolUse hook that gates mesh export and slicing. Start with the printable-parts skill.",
+  "version": "1.1.0",
   "author": { "name": "doyled-it" },
   "license": "AGPL-3.0-only",
   "keywords": ["3d-printing", "cad", "text-to-cad", "mesh", "stl", "3mf", "dfm", "bambu", "hook", "checks"]

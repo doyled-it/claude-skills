@@ -111,7 +111,7 @@ test('printable-parts: marketplace entry and plugin metadata are consistent', ()
   assert.equal(entry.source, './plugins/printable-parts');
   const plugin = ppPlugin();
   assert.equal(plugin.name, 'printable-parts');
-  assert.equal(plugin.version, '1.0.0');
+  assert.equal(plugin.version, '1.1.0');
   // Description consistent across the two manifests (AGENTS.md requirement).
   assert.equal(plugin.description, entry.description);
   assert.match(plugin.description, /text-to-cad/u);
@@ -151,6 +151,28 @@ test('printable-parts: the enforcement reference documents the per-runtime limit
   // The hook is Claude Code only; other runtimes get the soft + repo layers.
   assert.match(text, /Claude Code only|Claude Code\b[^.]*hook/iu);
   assert.match(text, /Codex/u);
+});
+
+test('printable-parts: SKILL.md carries the prior-art and reference-hardware steps', () => {
+  const text = ppSkill();
+  // The two addendum steps appear in the checklist.
+  assert.match(text, /0\.\s*Prior art searched/u);
+  assert.match(text, /1\.5\s*Reference model/u);
+  // And link one level deep to their own references.
+  assert.match(text, /references\/prior-art\.md/u);
+  assert.match(text, /references\/reference-hardware\.md/u);
+  for (const ref of ['prior-art.md', 'reference-hardware.md']) {
+    const body = read(
+      `plugins/printable-parts/skills/printable-parts/references/${ref}`
+    );
+    assert.ok(body.length > 0, `${ref} should exist and be non-empty`);
+  }
+  // The intent schema documents the two records the gate enforces.
+  const intentRef = read(
+    'plugins/printable-parts/skills/printable-parts/references/intent-list.md'
+  );
+  assert.match(intentRef, /prior_art/u);
+  assert.match(intentRef, /reference_tier/u);
 });
 
 test('printable-parts: hook manifest gates the Bash tool before it runs', () => {
