@@ -36,7 +36,10 @@ tool payload and hash a mesh with no shell dependencies. Two gates:
 
 - **Export gate.** A command that exports a printable mesh (`cad <type> export`
   with a `.stl` or `.3mf` output) is denied when no intent file in the tree names
-  that mesh. You write the intent list first.
+  that mesh, and also when the intent file that names it has not recorded the two
+  pre-modeling steps: a `prior_art` decision (step 0) and a `reference_tier` for
+  every device in `devices` (step 1.5). You write the intent list, the prior-art
+  search, and the reference-hardware tiers first.
 - **Slice / send gate.** A command that slices a mesh (`--slice`, `--export-3mf`,
   `--export-gcode`, or a slicer invoked by name) or opens one in a slicer or Bambu
   app is denied unless a passing check record sits beside the mesh whose SHA-256
