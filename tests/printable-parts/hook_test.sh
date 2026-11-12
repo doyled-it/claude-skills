@@ -59,9 +59,26 @@ else
   HASH=$(shasum -a 256 "$MESH" | awk '{print $1}')
 fi
 
+# A complete intent file: the geometry intent plus the two pre-modeling records
+# the export gate now also checks (prior art and a device reference tier).
 write_intent() {
   cat >"$TMP/perch.intent.json" <<EOF
-{"part":"perch","mesh":"out/perch.stl","intents":[{"id":"x","check":{"type":"bbox","expected_mm":[1,1,1]}}]}
+{"part":"perch","mesh":"out/perch.stl","prior_art":{"decision":"design_new","reason":"nothing close found"},"devices":[{"name":"usb-bt-adapter","reference_tier":3,"source":"datasheet envelope"}],"intents":[{"id":"x","check":{"type":"bbox","expected_mm":[1,1,1]}}]}
+EOF
+}
+
+# An intent file missing the prior-art record: names the mesh, but the record
+# gate must still deny the export.
+write_intent_no_prior_art() {
+  cat >"$TMP/perch.intent.json" <<EOF
+{"part":"perch","mesh":"out/perch.stl","devices":[{"name":"usb-bt-adapter","reference_tier":3,"source":"datasheet envelope"}],"intents":[{"id":"x","check":{"type":"bbox","expected_mm":[1,1,1]}}]}
+EOF
+}
+
+# An intent file whose device carries no reference tier (step 1.5 incomplete).
+write_intent_bad_device() {
+  cat >"$TMP/perch.intent.json" <<EOF
+{"part":"perch","mesh":"out/perch.stl","prior_art":{"decision":"design_new","reason":"nothing close found"},"devices":[{"name":"usb-bt-adapter","source":"datasheet envelope"}],"intents":[{"id":"x","check":{"type":"bbox","expected_mm":[1,1,1]}}]}
 EOF
 }
 
@@ -78,7 +95,19 @@ assert_deny "export mesh with no intent file" "$out"
 
 write_intent
 out=$(run_hook "$TMP" 'cad model export "$ID" out/perch.stl')
-assert_allow "export mesh with an intent file present" "$out"
+assert_allow "export mesh with a complete intent file (records present)" "$out"
+
+# The record gate: a named intent file is not enough. Missing prior art, or a
+# device with no reference tier, must still deny the export.
+write_intent_no_prior_art
+out=$(run_hook "$TMP" 'cad model export "$ID" out/perch.stl')
+assert_deny "export denied when the intent records no prior-art decision" "$out"
+
+write_intent_bad_device
+out=$(run_hook "$TMP" 'cad model export "$ID" out/perch.stl')
+assert_deny "export denied when a device has no reference_tier" "$out"
+
+write_intent  # restore the complete intent for the slice/send gate below
 
 # A STEP export is not a printable mesh: never gated.
 out=$(run_hook "$TMP" 'cad step export part.step part.step')

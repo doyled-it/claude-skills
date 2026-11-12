@@ -137,6 +137,89 @@ _CHECKS = {
 }
 
 
+PRIOR_ART_DECISIONS = ("design_new", "use_as_is", "remix")
+
+
+def _check_prior_art(pa):
+    """Step 0: a prior-art search was done and a decision recorded."""
+    if not isinstance(pa, dict):
+        return False, (
+            "no prior_art record. Search MakerWorld, Printables, and Thingiverse "
+            "first, then record decision (design_new|use_as_is|remix) and reason"
+        )
+    decision = pa.get("decision")
+    if decision not in PRIOR_ART_DECISIONS:
+        return False, f"prior_art.decision {decision!r} is not one of {PRIOR_ART_DECISIONS}"
+    if not str(pa.get("reason", "")).strip():
+        return False, "prior_art.reason is empty"
+    if decision in ("use_as_is", "remix"):
+        found = pa.get("found")
+        if not isinstance(found, list) or not found:
+            return False, (
+                f"prior_art.decision {decision} needs at least one found design "
+                "with url and license"
+            )
+        for f in found:
+            if not (isinstance(f, dict) and f.get("url") and f.get("license")):
+                return False, "each prior_art.found entry needs a url and a license"
+    return True, f"decision {decision}"
+
+
+def _check_devices(devices):
+    """Step 1.5: a reference-model tier is recorded for every device the part
+    holds, encloses, mounts, or touches."""
+    if devices is None:
+        return False, (
+            "no devices declared. List each device the part holds, encloses, "
+            "mounts, or touches with a reference_tier (1 official CAD .. 5 "
+            "estimate), or an empty list if it touches none"
+        )
+    if not isinstance(devices, list):
+        return False, "devices must be a list"
+    if not devices:
+        return True, "no devices (part touches none)"
+    problems = []
+    for d in devices:
+        if not isinstance(d, dict):
+            problems.append("a device entry is not an object")
+            continue
+        name = d.get("name", "?")
+        tier = d.get("reference_tier")
+        if not isinstance(tier, int) or isinstance(tier, bool) or not 1 <= tier <= 5:
+            problems.append(f"{name}: reference_tier must be an integer 1..5")
+        if not str(d.get("source", "")).strip():
+            problems.append(f"{name}: source is empty")
+        if tier == 5 and not d.get("unverified"):
+            problems.append(
+                f"{name}: tier 5 (estimate) must set unverified true and carry a "
+                "test-fit coupon"
+            )
+    if problems:
+        return False, "; ".join(problems)
+    tiers = ", ".join(f"{d.get('name', '?')}=tier{d.get('reference_tier')}" for d in devices)
+    return True, f"devices: {tiers}"
+
+
+def validate_records(intent):
+    """The two pre-modeling records the owner requires, both checkable in the
+    intent file without the mesh: the prior-art decision and the
+    reference-hardware tier per device."""
+    entries = []
+    ok, detail = _check_prior_art(intent.get("prior_art"))
+    entries.append({
+        "id": "prior-art", "type": "prior_art",
+        "claim": "prior art searched; a use/remix/design decision recorded",
+        "status": "pass" if ok else "fail", "detail": detail,
+    })
+    ok, detail = _check_devices(intent.get("devices"))
+    entries.append({
+        "id": "reference-hardware", "type": "reference_hardware",
+        "claim": "a reference-model tier is recorded for every device touched",
+        "status": "pass" if ok else "fail", "detail": detail,
+    })
+    return entries
+
+
 def run(intent_path, mesh_override=None, write_record=True):
     with open(intent_path, "r", encoding="utf-8") as handle:
         intent = json.load(handle)
@@ -155,7 +238,9 @@ def run(intent_path, mesh_override=None, write_record=True):
 
     tris = M.read_mesh(mesh_path)
 
-    results = []
+    # The prior-art decision and the reference-hardware tiers are recorded in
+    # the intent file and checked first, before the geometry.
+    results = validate_records(intent)
     for item in intents:
         spec = item.get("check", {})
         kind = spec.get("type")

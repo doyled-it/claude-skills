@@ -139,20 +139,62 @@ function loadJson(file) {
   }
 }
 
-// Does some intent file in the tree name this mesh (by its mesh field's
-// basename, or by its part matching the mesh basename)?
-function intentExistsFor(cwd, meshPath) {
+// Return the intent object in the tree that names this mesh (by its mesh
+// field's basename, or by its part matching the mesh basename), or null.
+function findIntentFor(cwd, meshPath) {
   const wantMesh = path.basename(meshPath).toLowerCase();
   const wantPart = baseNoExt(meshPath).toLowerCase();
   for (const f of walkFindJson(cwd, ".intent.json")) {
     const data = loadJson(f);
     if (!data) continue;
     if (data.mesh && path.basename(String(data.mesh)).toLowerCase() === wantMesh) {
-      return true;
+      return data;
     }
-    if (data.part && String(data.part).toLowerCase() === wantPart) return true;
+    if (data.part && String(data.part).toLowerCase() === wantPart) return data;
   }
-  return false;
+  return null;
+}
+
+const PRIOR_ART_DECISIONS = ["design_new", "use_as_is", "remix"];
+
+// The two pre-modeling records, checked mechanically on the intent file (same
+// rules as check_part.py). Returns null when fine, or a short reason.
+function recordProblem(intent) {
+  const pa = intent.prior_art;
+  if (!pa || typeof pa !== "object") {
+    return "records no prior-art decision. Search MakerWorld, Printables, and " +
+      "Thingiverse first, then record prior_art (design_new|use_as_is|remix) and a reason";
+  }
+  if (!PRIOR_ART_DECISIONS.includes(pa.decision)) {
+    return "prior_art.decision must be one of design_new, use_as_is, remix";
+  }
+  if (!String(pa.reason || "").trim()) return "prior_art.reason is empty";
+  if (pa.decision === "use_as_is" || pa.decision === "remix") {
+    const found = pa.found;
+    if (!Array.isArray(found) || found.length === 0 ||
+        !found.every((f) => f && f.url && f.license)) {
+      return "prior_art " + pa.decision + " needs a found design with url and license";
+    }
+  }
+  const devices = intent.devices;
+  if (devices === undefined || devices === null) {
+    return "does not declare devices. List each device the part touches with a " +
+      "reference_tier (1 official CAD .. 5 estimate), or an empty list if none";
+  }
+  if (!Array.isArray(devices)) return "devices must be a list";
+  for (const d of devices) {
+    if (!d || typeof d !== "object") return "a device entry is not an object";
+    const name = d.name || "?";
+    const tier = d.reference_tier;
+    if (!Number.isInteger(tier) || tier < 1 || tier > 5) {
+      return "device '" + name + "' has no reference_tier (1 official CAD .. 5 estimate)";
+    }
+    if (!String(d.source || "").trim()) return "device '" + name + "' records no source";
+    if (tier === 5 && !d.unverified) {
+      return "device '" + name + "' is tier 5 (estimate): set unverified true and add a coupon";
+    }
+  }
+  return null;
 }
 
 // Find a passing check record whose hash matches the mesh on disk now.
@@ -204,7 +246,8 @@ function main() {
   if (isCadExport(command, tokens)) {
     const outputs = tokens.filter((t) => hasExt(t, PRINTABLE_EXT));
     for (const mesh of outputs) {
-      if (!intentExistsFor(cwd, mesh)) {
+      const intent = findIntentFor(cwd, mesh);
+      if (!intent) {
         deny(
           "printable-parts: no intent file names '" +
             path.basename(mesh) +
@@ -214,6 +257,17 @@ function main() {
             ".intent.json) before exporting a mesh to print. The intent list is " +
             "what the checks read; exporting first is how an inverted countersink " +
             "or a short slot ships."
+        );
+      }
+      const problem = recordProblem(intent);
+      if (problem) {
+        deny(
+          "printable-parts: the intent file for '" +
+            path.basename(mesh) +
+            "' " +
+            problem +
+            ". Record the prior-art search (step 0) and a reference-model tier for " +
+            "every device the part touches (step 1.5) before exporting."
         );
       }
     }

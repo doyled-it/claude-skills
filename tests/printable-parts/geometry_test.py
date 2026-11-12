@@ -98,12 +98,29 @@ def build_part(path, head_on_top, slot_width):
     _write_binary_stl(path, tris)
 
 
+def records(decision="design_new"):
+    """A valid pre-modeling record block: a prior-art decision and a device
+    reference tier. The perch touches a USB Bluetooth adapter, modeled from its
+    datasheet envelope (tier 3)."""
+    pa = {"decision": decision, "reason": "nothing close found; fit is specific"}
+    if decision in ("use_as_is", "remix"):
+        pa["found"] = [{"url": "https://example.test/x", "license": "CC BY 4.0"}]
+    return {
+        "prior_art": pa,
+        "devices": [
+            {"name": "usb-bt-adapter", "reference_tier": 3,
+             "source": "datasheet envelope, mounting pitch from drawing"},
+        ],
+    }
+
+
 def intent_for(mesh_path, slot_expected=27.0):
     return {
         "part": "perch",
         "mesh": os.path.basename(mesh_path),
         "units": "mm",
         "params": {"slot_mm": slot_expected, "head_r": R_HEAD, "pilot_r": R_PILOT},
+        **records(),
         "intents": [
             {"id": "envelope", "claim": "40 wide shelf perch, 60 x 30 x 12 mm",
              "check": {"type": "bbox", "expected_mm": [60, 30, 12],
@@ -213,6 +230,42 @@ def run():
                "3MF parses to the same bounding box as the STL")
     except Exception as exc:  # noqa: BLE001
         expect(False, f"3MF round-trip raised {exc}")
+
+    # 6. The pre-modeling records (step 0 prior art, step 1.5 reference
+    #    hardware) are checked on the intent file, before the geometry.
+    def rec_status(intent, which):
+        return next(r for r in C.validate_records(intent) if r["type"] == which)["status"]
+
+    good_intent = {**records(), "intents": []}
+    expect(rec_status(good_intent, "prior_art") == "pass",
+           "valid prior_art (design_new + reason) passes")
+    expect(rec_status(good_intent, "reference_hardware") == "pass",
+           "a device with a reference_tier and source passes")
+
+    expect(rec_status({"intents": []}, "prior_art") == "fail",
+           "a missing prior_art record fails")
+    expect(rec_status({"prior_art": {"decision": "remix", "reason": "r"},
+                       "devices": []}, "prior_art") == "fail",
+           "remix with no found design (url + license) fails")
+    expect(rec_status({"devices": [{"name": "d", "reference_tier": 9,
+                                    "source": "s"}]}, "reference_hardware") == "fail",
+           "a device with an out-of-range reference_tier fails")
+    expect(rec_status({"devices": [{"name": "d", "reference_tier": 5,
+                                    "source": "s"}]}, "reference_hardware") == "fail",
+           "tier 5 (estimate) without unverified:true fails")
+    expect(rec_status({"devices": []}, "reference_hardware") == "pass",
+           "an explicit empty devices list passes (part touches none)")
+
+    # A good mesh with a missing prior-art record fails the whole check, so the
+    # records gate the part just like a bad dimension does.
+    norec = os.path.join(tmp, "perch_norec.intent.json")
+    bare = intent_for(good)
+    del bare["prior_art"]
+    with open(norec, "w") as f:
+        json.dump(bare, f)
+    rec = C.run(norec, write_record=False)
+    expect(rec["status"] == "fail",
+           "a geometrically correct mesh fails when prior_art is absent")
 
     print()
     if FAILURES:
