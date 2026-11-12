@@ -37,6 +37,28 @@
         "Runs the checks and opens the cross-sections before slicing",
         "Never starts or sends a print"
       ]
+    },
+    {
+      "id": 4,
+      "name": "antenna-perch-no-prior-art-search",
+      "query": "Design a perch that holds a USB Bluetooth antenna adapter up near the ceiling, screwed to a shelf bracket.",
+      "files": [],
+      "expected_behavior": [
+        "Searches MakerWorld, Printables, and Thingiverse before modeling, with product and generic terms only and nothing about the owner",
+        "Records the prior_art decision (design_new, use_as_is, or remix) with a reason, and links plus licenses for any found design, in the intent file",
+        "On Claude Code, the export gate blocks exporting until the prior_art record exists, so the search cannot be skipped"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "pi3-and-7in-display-enclosure-reference-models",
+      "query": "Design an enclosure for a Raspberry Pi 3 Model B and the official Raspberry Pi 7 inch touch display, so the screen sits in a front bezel and the Pi mounts behind it.",
+      "files": [],
+      "expected_behavior": [
+        "Gets a 3D model of each device from the best available tier (official mechanical drawing, or a GrabCAD STEP spot-checked against it) and records the reference_tier and source per device in the intent file",
+        "Places both devices in an assembly and checks no interference, the clearance per side, reachability of ports, SD card, and the display ribbon, and the insertion path",
+        "On Claude Code, the export gate blocks exporting until every device carries a reference_tier"
+      ]
     }
   ]
 }

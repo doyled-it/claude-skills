@@ -59,6 +59,53 @@ or no passing check record.
   mesh hash. On Codex or opencode there is no hook, so the soft layer and CI carry
   it. Decisions are asserted in `tests/printable-parts/hook_test.sh`.
 
+## Scenario 4: the antenna perch where nobody searched for prior art
+
+Task: "Design a perch that holds a USB Bluetooth antenna adapter up near the
+ceiling, screwed to a shelf bracket." (The real antenna perch shipped without
+anyone searching existing designs; the owner asked afterward whether anyone had,
+and nobody had.)
+
+- **Baseline failure (no plugin):** goes straight to modeling. No MakerWorld,
+  Printables, or Thingiverse search; no record of whether a usable design already
+  existed. The owner has to ask after the fact.
+- **Pass (with plugin):** step 0 runs first. The agent searches MakerWorld,
+  Printables, and Thingiverse with generic terms ("USB adapter perch", "antenna
+  shelf mount"), records what it found with links and licenses, and records a
+  decision (`design_new`, `use_as_is`, or `remix`) with a reason in the intent
+  file's `prior_art` block. The export gate blocks the export until that record
+  exists, so the search cannot be silently skipped. Queries carry only product and
+  generic terms, never anything about the owner.
+
+**Deterministic evidence:** `geometry_test.py` asserts that a mesh with no
+`prior_art` record fails the check, and `hook_test.sh` asserts the export gate
+denies an export whose intent file records no prior-art decision.
+
+## Scenario 5: a Pi 3 plus 7 inch display enclosure that needs reference models
+
+Task: "Design an enclosure for a Raspberry Pi 3 Model B and the official
+Raspberry Pi 7 inch touch display, so the screen sits in a front bezel and the Pi
+mounts behind it." Both have official mechanical drawing PDFs, and community STEP
+models built from them exist on GrabCAD.
+
+- **Baseline failure (no plugin):** models the box from nominal numbers typed from
+  memory or a blog, with no device model in the assembly. The screen's active area
+  and ribbon exit, the Pi's port wall and GPIO header, and the display mounting
+  bosses are easy to get wrong, and nothing catches an interference or an
+  unreachable port before the print.
+- **Pass (with plugin):** step 1.5 runs. The agent gets a model of each device
+  (official mechanical drawing, or a GrabCAD STEP spot-checked against it, recorded
+  as tier 2 or 3), places both in an assembly with the enclosure, and checks no
+  interference, the clearance per side, that the ports, the SD card, and the
+  display ribbon stay reachable, and that the insertion path works. Each device is
+  recorded in the intent file's `devices` block with its `reference_tier` and
+  source. The export gate blocks the export until every device carries a tier.
+
+**Deterministic evidence:** `geometry_test.py` asserts the reference-hardware
+check passes for a device with a tier and source and fails for an out-of-range
+tier or a tier 5 estimate with no `unverified` flag; `hook_test.sh` asserts the
+export gate denies an export whose device has no `reference_tier`.
+
 ## How to run the fresh-agent scenarios
 
 For scenario 1, give a fresh agent the task once without the plugin and once with
