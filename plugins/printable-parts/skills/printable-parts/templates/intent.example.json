@@ -2,6 +2,19 @@
   "part": "perch",
   "mesh": "out/perch.stl",
   "units": "mm",
+  "prior_art": {
+    "decision": "design_new",
+    "reason": "searched MakerWorld, Printables, Thingiverse for 'usb bluetooth adapter perch'; no close match, and the shelf fit is specific",
+    "found": []
+  },
+  "devices": [
+    {
+      "name": "usb-bt-adapter",
+      "reference_tier": 3,
+      "source": "envelope built from the adapter datasheet; body 18 mm wide",
+      "unverified": false
+    }
+  ],
   "params": {
     "body_w": 60,
     "body_d": 30,

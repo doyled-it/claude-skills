@@ -4,6 +4,7 @@
 
 - Why the list comes first
 - The intent file format
+- The pre-modeling records (prior_art and devices)
 - Check types
 - Deriving the numbers from parameters
 
@@ -42,6 +43,36 @@ Keep the list in `<name>.intent.json` beside the model script. One file per part
   number changes with it.
 - Every intent has an `id`, a plain-language `claim` that names the physics, and a
   `check` the measurement runs.
+
+## The pre-modeling records (prior_art and devices)
+
+Two records sit beside the intents and are checked before the geometry, by both
+`check_part.py` and the export gate. They make the owner's step 0 and step 1.5
+mechanical: a mesh cannot be exported until they are filled in. Full detail is in
+[prior-art.md](prior-art.md) and [reference-hardware.md](reference-hardware.md);
+the fields are:
+
+```json
+{
+  "prior_art": {
+    "decision": "design_new",
+    "reason": "no close match on MakerWorld, Printables, Thingiverse; fit is specific",
+    "found": [{ "url": "https://makerworld.com/...", "license": "CC BY 4.0" }]
+  },
+  "devices": [
+    { "name": "usb-bt-adapter", "reference_tier": 3,
+      "source": "datasheet envelope; mounting pitch from the drawing",
+      "unverified": false }
+  ]
+}
+```
+
+- `prior_art.decision` is one of `design_new`, `use_as_is`, `remix`, and
+  `prior_art.reason` must be non-empty. `use_as_is` and `remix` need at least one
+  `found` entry with a `url` and a `license`.
+- `devices` is a list, empty when the part touches no device. Each entry needs a
+  `reference_tier` (an integer 1 to 5) and a non-empty `source`. A tier 5
+  (estimate) entry must set `unverified: true` and carry a test-fit coupon.
 
 ## Check types
 

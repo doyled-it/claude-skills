@@ -29,7 +29,9 @@ steps 2 to 4 repeats until every intent passes.
 
 ```
 Printable part: <name>
+- [ ] 0. Prior art searched (MakerWorld, Printables, Thingiverse); decision recorded
 - [ ] 1. Intent list written (<name>.intent.json), every function a measurable claim
+- [ ] 1.5 Reference model per device (five-tier source order); assembly fit checked
 - [ ] 2. Modeled with the cad skill
 - [ ] 3. Exported, then every intent checked on the mesh (check_part.py) + cad printing DFM
 - [ ] 4. Stale-file guard green (bbox + key dims from parameters)
@@ -38,6 +40,20 @@ Printable part: <name>
 - [ ] 7. Print sheet written (orientation, filament, Bambu profile, what to measure)
 - [ ] 8. Reviewer re-ran the checks and opened the cross-sections
 ```
+
+Steps 0 and 1.5 are also recorded in the intent file (`prior_art` and
+`devices`), so the export gate and `check_part.py` confirm them mechanically,
+not just the prose. Both run before modeling.
+
+### 0. Prior-art search, before anything
+
+Before modeling, search existing designs: MakerWorld, Printables, and Thingiverse,
+with STLFinder or 3DGO as aggregators. Search with the device's product name and
+generic terms only, never anything about the owner. Record what you found (links
+and licenses) and decide: use as is, remix (license permitting), or design new,
+with the reason. A downloaded or remixed mesh still goes through the same intent
+checks. The decision goes in the intent file's `prior_art` block, which the export
+gate requires. See [references/prior-art.md](references/prior-art.md).
 
 ### 1. Intent list, before modeling
 
@@ -53,6 +69,21 @@ check types, and [templates/intent.example.json](templates/intent.example.json).
 Writing the intent list first is also what the export gate looks for (see
 [references/enforcement.md](references/enforcement.md)): exporting a mesh with no
 intent file is blocked.
+
+### 1.5 Reference hardware, whenever the part touches a device
+
+Whenever the part holds, encloses, mounts, or touches a device, get a 3D model of
+that device and record which source tier it came from, in this order of
+preference: official CAD from the maker (tier 1), a community model built from the
+official drawing and spot-checked (tier 2), an envelope built from the drawing or
+datasheet (tier 3), owner caliper measurements (tier 4), or an estimate with
+clearance padding, flagged unverified with a mandatory coupon (tier 5). Place the
+device in an assembly with the part and check: no interference, the intended
+clearance per side, that ports, buttons, SD cards, cables, and screens stay
+reachable, and that the insertion path works. Snapshot the assembly and a
+cross-section. Record each device in the intent file's `devices` block (name,
+`reference_tier`, source), which the export gate requires. See
+[references/reference-hardware.md](references/reference-hardware.md).
 
 ### 2. Model with the cad skill
 
